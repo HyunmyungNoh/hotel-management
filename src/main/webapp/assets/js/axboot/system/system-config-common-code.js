@@ -94,10 +94,12 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
           label: COL('ax.admin.commoncode.group.code'),
           width: 250,
           align: 'center',
-          editor: { type: 'text', disabled: 'notCreated' },
+          editor: 'text'
+          // editor: { type: 'text', disabled: 'notCreated' }, 5/10 공통코드 수정 되지 않는 컬럼 수정
         },
         { key: 'groupNm', label: COL('ax.admin.commoncode.group.name'), width: 200, align: 'center', editor: 'text' },
-        { key: 'code', label: COL('ax.admin.commoncode.code'), width: 100, align: 'center', editor: { type: 'text', disabled: 'notCreated' } },
+        { key: 'code', label: COL('ax.admin.commoncode.code'), width: 100, align: 'center', editor: 'text'},
+        // { key: 'code', label: COL('ax.admin.commoncode.code'), width: 100, align: 'center', editor: { type: 'text', disabled: 'notCreated' } },
         { key: 'name', label: COL('ax.admin.commoncode.name'), width: 150, align: 'left', editor: 'text' },
         { key: 'sort', label: COL('ax.admin.sort'), editor: 'number' },
         { key: 'useYn', label: COL('ax.admin.use.or.not'), editor: 'checkYn' },
