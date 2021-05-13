@@ -24,6 +24,7 @@
         var SCRIPT_SESSION = (function(json){return json;})(${scriptSession});
     </script>
     <script type="text/javascript" src="<c:url value='/assets/js/plugins.min.js' />"></script>
+    <script type="text/javascript" src="<c:url value='https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js' />"></script>
     <script type="text/javascript" src="<c:url value='/assets/js/axboot/dist/axboot.js' />"></script>
     <script type="text/javascript" src="<c:url value='/axboot.config.js' />"></script>
     <jsp:invoke fragment="css"/>
