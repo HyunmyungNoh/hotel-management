@@ -23,7 +23,7 @@
         <ax:script-lang key="ax.script" var="LANG" />
         <ax:script-lang key="ax.base" var="COL" />
         <script type="text/javascript" src="https://cdn.rawgit.com/ax5ui/ax5ui-uploader/master/dist/ax5uploader.js"></script>
-        <script type="text/javascript" src="<c:url value='/assets/plugins-fix/ckeditor/ckeditor.js' />"></script>
+        <!-- <script type="text/javascript" src="<c:url value='/assets/plugins-fix/ckeditor/ckeditor.js' />"></script> -->
         <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-info.js' />"></script>
     </jsp:attribute>
 
@@ -56,7 +56,7 @@
                             <input type="text" name ="email" class="js-guestEmail form-control" />
                         </ax:td>
                     </ax:tr>
-                    <ax:tr>
+<!--                     <ax:tr>
                         <ax:td label='투숙날짜' width="100%">
                             <div class="form-group" data-ax5picker="date">
                                 <div data-ax-td-wrap>
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         </ax:td>
-                    </ax:tr>
+                    </ax:tr> -->
                 </ax:tbl>
             </ax:form>
             <div class="H10"></div>
@@ -182,7 +182,7 @@
                                 </ax:td>
                             </ax:tr>
 
-                            <ax:tr labelWidth="120px">
+                            <!-- <ax:tr labelWidth="120px">
                                 <ax:td label="첨부파일 <i class='icon-info-circled cp'></i>" width="100%">
                                     <div data-ax5uploader="upload1">
                                         <input type="hidden" id="targetType" name="targetType" value="EDUCATION_TEACH" />
@@ -191,13 +191,22 @@
                                         <div data-uploaded-box="upload1" data-ax5uploader-uploaded-box="inline"></div>
                                     </div>
                                 </ax:td>
-                            </ax:tr>
+                            </ax:tr> -->
 
                         </ax:tbl>
                     </form>
                 </div>
 
-                <div data-ax5grid="grid-view-02" style="height: 300px;"></div>
+                <div class="H5"></div>
+                <div class="ax-button-group" role="panel-header">
+                    <div class="left">
+                        <h3><i class="cqc-list"></i> 투숙 이력 </h3>
+                    </div>
+                    <div class="right">
+                    </div>
+                </div>
+
+                <div data-ax5grid="grid-view-02" style="height: 200px;"></div>
             </ax:split-panel>
         </ax:split-layout>
 

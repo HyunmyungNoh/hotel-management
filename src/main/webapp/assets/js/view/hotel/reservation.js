@@ -38,7 +38,8 @@ var ACTIONS = axboot.actionExtend(fnObj, {
     FORM_CLEAR: function (caller, act, data) {
         axDialog.confirm({ msg: LANG('ax.script.form.clearconfirm') }, function () {
             if (this.key == 'ok') {
-                caller.formView01.clear().gridView01.clear();
+                caller.gridView01.clear();
+                caller.formView01.clear();
                 console.log("지워졌습니다");
                 // $('[data-ax-path="companyNm"]').focus();
             }
@@ -66,6 +67,7 @@ fnObj.pageStart = function () {
     this.pageButtonView.initView();
     this.searchView.initView();
     this.gridView01.initView();
+    this.formView01.initView();
 
     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
 };
@@ -84,8 +86,8 @@ fnObj.pageButtonView = axboot.viewExtend({
             "save": function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
             },
-            "excel": function () {
-
+            "fn1": function () {
+                ACTIONS.dispatch(ACTIONS.FORM_CLEAR);
             }
         });
     }
@@ -140,9 +142,6 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             },
             "delete": function () {
                 ACTIONS.dispatch(ACTIONS.ITEM_DEL);
-            },
-            "form-clear": function() {
-                ACTIONS.dispatch(ACTIONS.FORM_CLEAR);
             }
         });
     },
@@ -161,5 +160,67 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
     },
     addRow: function () {
         this.target.addRow({__created__: true}, "last");
+    }
+});
+
+/**
+ * formView
+ */
+ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
+    getDefaultData: function () {
+        return { useYn: 'Y' };
+    },
+    getData: function () {
+        var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
+        return $.extend({}, data);
+    },
+    setData: function (data) {
+        if (typeof data === 'undefined') data = this.getDefaultData();
+        data = $.extend({}, data);
+
+        this.model.setModel(data);
+        this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경
+    },
+    validate: function () {
+        var item = this.model.get();
+
+        var rs = this.model.validate();
+        if (rs.error) {
+            axDialog.alert(LANG('ax.script.form.validate', rs.error[0].jquery.attr('title')), function () {
+                rs.error[0].jquery.focus();
+            });
+            return false;
+        }
+
+        // required 이외 벨리데이션 정의
+        var pattern;
+        if (item.email) {
+            pattern = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.(?:[A-Za-z0-9]{2,}?)$/i;
+            if (!pattern.test(item.email)) {
+                axDialog.alert('이메일 형식을 확인하세요.', function () {
+                    $('[data-ax-path="email"]').focus();
+                });
+                return false;
+            }
+        }
+
+        if (item.bizno && !(pattern = /^([0-9]{3})\-?([0-9]{2})\-?([0-9]{5})$/).test(item.bizno)) {
+            axDialog.alert('사업자번호 형식을 확인하세요.'),
+                function () {
+                    $('[data-ax-path="bizno"]').focus();
+                };
+            return false;
+        }
+
+        return true;
+    },
+    initView: function () {
+        var _this = this; // fnObj.formView01
+
+        _this.target = $('.js-form');
+
+        this.model = new ax5.ui.binder();
+        this.model.setModel(this.getDefaultData(), this.target);
+        this.modelFormatter = new axboot.modelFormatter(this.model); // 모델 포메터 시작
     }
 });
