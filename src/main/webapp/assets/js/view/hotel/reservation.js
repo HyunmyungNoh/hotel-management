@@ -2,8 +2,8 @@ var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
     PAGE_SEARCH: function (caller, act, data) {
         axboot.ajax({
-            type: "GET",
-            url: ["samples", "parent"],
+            type: 'GET',
+            url: ['samples', 'parent'],
             data: caller.searchView.getData(),
             callback: function (res) {
                 caller.gridView01.setData(res);
@@ -12,35 +12,33 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 // axboot.ajax 함수에 2번째 인자는 필수가 아닙니다. ajax의 옵션을 전달하고자 할때 사용합니다.
                 onError: function (err) {
                     console.log(err);
-                }
-            }
+                },
+            },
         });
 
         return false;
     },
     PAGE_SAVE: function (caller, act, data) {
-        var saveList = [].concat(caller.gridView01.getData("modified"));
-        saveList = saveList.concat(caller.gridView01.getData("deleted"));
+        var saveList = [].concat(caller.gridView01.getData('modified'));
+        saveList = saveList.concat(caller.gridView01.getData('deleted'));
 
         axboot.ajax({
-            type: "PUT",
-            url: ["samples", "parent"],
+            type: 'PUT',
+            url: ['samples', 'parent'],
             data: JSON.stringify(saveList),
             callback: function (res) {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-                axToast.push("저장 되었습니다");
-            }
+                axToast.push('저장 되었습니다');
+            },
         });
     },
-    ITEM_CLICK: function (caller, act, data) {
-
-    },
+    ITEM_CLICK: function (caller, act, data) {},
     FORM_CLEAR: function (caller, act, data) {
         axDialog.confirm({ msg: LANG('ax.script.form.clearconfirm') }, function () {
             if (this.key == 'ok') {
                 caller.gridView01.clear();
                 caller.formView01.clear();
-                console.log("지워졌습니다");
+                console.log('지워졌습니다');
                 // $('[data-ax-path="companyNm"]').focus();
             }
         });
@@ -49,17 +47,17 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         caller.gridView01.addRow();
     },
     ITEM_DEL: function (caller, act, data) {
-        caller.gridView01.delRow("selected");
+        caller.gridView01.delRow('selected');
     },
     dispatch: function (caller, act, data) {
         var result = ACTIONS.exec(caller, act, data);
-        if (result != "error") {
+        if (result != 'error') {
             return result;
         } else {
             // 직접코딩
             return false;
         }
-    }
+    },
 });
 
 // fnObj 기본 함수 스타트와 리사이즈
@@ -72,25 +70,22 @@ fnObj.pageStart = function () {
     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
 };
 
-fnObj.pageResize = function () {
-
-};
-
+fnObj.pageResize = function () {};
 
 fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
-        axboot.buttonClick(this, "data-page-btn", {
-            "search": function () {
+        axboot.buttonClick(this, 'data-page-btn', {
+            search: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
             },
-            "save": function () {
+            save: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
             },
-            "fn1": function () {
+            fn1: function () {
                 ACTIONS.dispatch(ACTIONS.FORM_CLEAR);
-            }
+            },
         });
-    }
+    },
 });
 
 //== view 시작
@@ -99,19 +94,18 @@ fnObj.pageButtonView = axboot.viewExtend({
  */
 fnObj.searchView = axboot.viewExtend(axboot.searchView, {
     initView: function () {
-        this.target = $(document["searchView0"]);
-        this.target.attr("onsubmit", "return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);");
-        this.filter = $("#filter");
+        this.target = $(document['searchView0']);
+        this.target.attr('onsubmit', 'return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);');
+        this.filter = $('#filter');
     },
     getData: function () {
         return {
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
-            filter: this.filter.val()
-        }
-    }
+            filter: this.filter.val(),
+        };
+    },
 });
-
 
 /**
  * gridView
@@ -126,30 +120,36 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             multipleSelect: true,
             target: $('[data-ax5grid="grid-view-01"]'),
             columns: [
-                {key: "key", label: "작성일", width: 160, align: "center", editor: "text"},
-                {key: "value", label: "메모", width: 350, align: "left", editor: "text"},
+                {
+                    key: 'writeDt',
+                    label: '작성일',
+                    width: 160,
+                    align: 'center',
+                    editor: 'text',
+                },
+                { key: 'value', label: '메모', width: '*', align: 'left', editor: 'text' },
             ],
             body: {
                 onClick: function () {
-                    this.self.select(this.dindex, {selectedClear: true});
-                }
-            }
+                    this.self.select(this.dindex, { selectedClear: true });
+                },
+            },
         });
 
-        axboot.buttonClick(this, "data-grid-view-01-btn", {
-            "add": function () {
+        axboot.buttonClick(this, 'data-grid-view-01-btn', {
+            add: function () {
                 ACTIONS.dispatch(ACTIONS.ITEM_ADD);
             },
-            "delete": function () {
+            delete: function () {
                 ACTIONS.dispatch(ACTIONS.ITEM_DEL);
-            }
+            },
         });
     },
     getData: function (_type) {
         var list = [];
         var _list = this.target.getList(_type);
 
-        if (_type == "modified" || _type == "deleted") {
+        if (_type == 'modified' || _type == 'deleted') {
             list = ax5.util.filter(_list, function () {
                 return this.id;
             });
@@ -159,14 +159,16 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
         return list;
     },
     addRow: function () {
-        this.target.addRow({__created__: true}, "last");
-    }
+        // this.target.addRow({__created__: true, writeDt: ax5.util.date(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 12), {return: 'yyyy-MM-dd'})}, "last");
+        this.target.addRow({ __created__: true, writeDt: moment().format('YYYY-MM-DD') }, 'last');
+        // this.target.addRow({__created__: true}, "last");
+    },
 });
 
 /**
  * formView
  */
- fnObj.formView01 = axboot.viewExtend(axboot.formView, {
+fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     getDefaultData: function () {
         return { useYn: 'Y' };
     },
@@ -214,13 +216,63 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
 
         return true;
     },
+    calcDepDt: function (arrDt, nightCnt) {
+        var depDt = moment(arrDt).add(nightCnt, 'days').format('yyyy-MM-DD');
+        $('[data-ax-path="depDt"]').val(depDt).trigger('change');
+    },
+    calcNight: function (arrDt, depDt) {
+        var nightCnt = moment(depDt).diff(moment(arrDt), 'days');
+        $('[data-ax-path="nightCnt"]').val(nightCnt).trigger('change');
+    },
+    /*
+    calcNight: function(depDt) {
+        if(!depDt) return;
+        var arrDt = $('.js-arrDt').val();
+        if(!arrDt) return;
+
+        var night = moment(arrDt).diff(moment(depDt), 'days');
+        this.model.set('nightCnt', night);
+    },
+    calcArrDt: function(arrDt) {
+        if(!value) return;
+        var depDt = $('.js-depDt').val();
+        if(!depDt) return;
+
+        var arrDt = moment(arrDt).subtract(value, 'day').format('yyyy-MM-DD');
+        this.model.set('depDt', depDt);
+    }, */
+
     initView: function () {
         var _this = this; // fnObj.formView01
 
         _this.target = $('.js-form');
 
+        _this.target.find('[data-ax5picker="date"]').ax5picker({
+            direction: 'auto',
+            content: {
+                type: 'date',
+            },
+        });
+
         this.model = new ax5.ui.binder();
         this.model.setModel(this.getDefaultData(), this.target);
         this.modelFormatter = new axboot.modelFormatter(this.model); // 모델 포메터 시작
-    }
+
+        /* 분기를 여기서 두 번 태움  */
+        $('.js-arrDt').on('change', function () {
+            var arrDt = $(this).val();
+            $('.js-nightCnt').on('change', function () {
+                var nigntCnt = $(this).val();
+                _this.calcDepDt(arrDt, nigntCnt);
+            });
+        });
+
+        $('.js-arrDt').on('change', function () {
+            var arrDt = $(this).val();
+            $('.js-depDt').on('change', function () {
+                var depDt = $(this).val();
+                _this.calcNight(arrDt, depDt);
+            });
+        });
+    },
 });

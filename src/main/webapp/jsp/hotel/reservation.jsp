@@ -30,9 +30,12 @@
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
                             <div data-ax-td-label style="width:120px;">도착일</div>
-                            <div data-ax-td-wrap>
-                            <input type="date" data-ax-path="arrDt" class="form-control js-arrDt"  />
-                            </div>
+                                <div data-ax-td-wrap>
+                                    <div class="input-group" data-ax5picker="date">
+                                        <input type="text" class="form-control js-arrDt" data-ax-path="arrDt" placeholder="YYYY-MM-DD">
+                                        <span class="input-group-addon"><i class="cqc-calendar"></i></span>
+                                    </div>
+                                </div>
                         </div>
                         <div data-ax-td style="width:30%">
                             <div data-ax-td-label style="width:120px;">숙박수</div>
@@ -43,7 +46,11 @@
                         <div data-ax-td style="width:35%">
                             <div data-ax-td-label style="width:120px;">출발일</div>
                             <div data-ax-td-wrap>
-                            <input type="date" data-ax-path="depDt" class="form-control js-depDt"  />
+                            <!-- <input type="date" data-ax-path="depDt" class="form-control js-depDt"  /> -->
+                                <div class="input-group" data-ax5picker="date">
+                                    <input type="text" class="form-control js-depDt" data-ax-path="depDt" placeholder="YYYY-MM-DD">
+                                    <span class="input-group-addon"><i class="cqc-calendar"></i></span>
+                                </div>
                             </div>
                         </div>
                     </div>
