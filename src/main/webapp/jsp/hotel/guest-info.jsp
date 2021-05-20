@@ -169,35 +169,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <ax:tr labelWidth="120px">
-                                <ax:td label="이름" width="50%">
-                                    <input type="text" name="id" data-ax-path="id" class="form-control" readonly="readonly">
-                                </ax:td>
-                                <ax:td label="영문" width="50%">
-                                    <input type="text" name="id" data-ax-path="id" class="form-control" readonly="readonly">
-                                </ax:td>
-                            </ax:tr> -->
-
-                            
-
-                            <ax:tr labelWidth="120px">
-                                <ax:td label="비고" width="100%">
-                                    <!-- <textarea name="remark" id="remark" data-ax-path="remark" rows="5" class="form-control"></textarea> -->
-                                    <textarea name = "rmk" data-ax-path="rmk" class="form-control js-rmk"></textarea>
-                                </ax:td>
-                            </ax:tr>
-
-                            <!-- <ax:tr labelWidth="120px">
-                                <ax:td label="첨부파일 <i class='icon-info-circled cp'></i>" width="100%">
-                                    <div data-ax5uploader="upload1">
-                                        <input type="hidden" id="targetType" name="targetType" value="EDUCATION_TEACH" />
-                                        <button data-ax5uploader-button="selector" class="btn btn-primary">Select File (*/*)</button>
-                                        (Upload Max fileSize 100MB)
-                                        <div data-uploaded-box="upload1" data-ax5uploader-uploaded-box="inline"></div>
+                            <div data-ax-tr>
+                                <div data-ax-td style="width:100%">
+                                    <div data-ax-td-label style="width:120px;">비고</div>
+                                    <div data-ax-td-wrap>
+                                        <textarea name = "rmk" data-ax-path="rmk" class="form-control js-rmk"></textarea>
                                     </div>
-                                </ax:td>
-                            </ax:tr> -->
-
+                                </div>
+                            </div>
                         </ax:tbl>
                     </form>
                 </div>
