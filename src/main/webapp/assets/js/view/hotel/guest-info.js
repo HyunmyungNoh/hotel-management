@@ -5,11 +5,12 @@ var ACTIONS = axboot.actionExtend(fnObj, {
 
         axboot.ajax({
             type: 'GET',
-            url: '/api/v1/education/teachgridform',
+            url: '/api/v1/guest',
             data: paramObj,
             callback: function (res) {
-                caller.formView01.clear();
                 caller.gridView01.setData(res);
+                caller.formView01.clear();
+                caller.gridView02.clear();
             },
             options: {
                 // axboot.ajax 함수에 2번째 인자는 필수가 아닙니다. ajax의 옵션을 전달하고자 할때 사용합니다.
@@ -23,48 +24,25 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         if (caller.formView01.validate()) {
             var item = caller.formView01.getData();
 
-            var fileIds = [];
+            /* var fileIds = [];
             var files = ax5.util.deepCopy(caller.formView01.UPLOAD.uploadedFiles);
             $.each(files, function(idx, o) {
                 fileIds.push(o.id);
             });
-            item.fileIdList = fileIds;
+            item.fileIdList = fileIds; */
 
             if (!item.id) item.__created__ = true;
             axboot.ajax({
                 type: 'POST',
-                url: '/api/v1/education/teachgridform',
+                url: '/api/v1/guest',
                 data: JSON.stringify(item),
                 callback: function (res) {
                     axToast.push('저장 되었습니다');
                     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+					// caller.formView01.clear();
                 },
             });
         }
-    },
-    PAGE_DELETE: function (caller, act, data) {
-        axDialog.confirm({ msg: '삭제하시겠습니까?' }, function () {
-            if (this.key == 'ok') {
-                var items = caller.gridView01.getData('selected');
-                if (!items.length) {
-                    axDialog.alert('삭제할 데이터가 없습니다.');
-                    return false;
-                }
-
-                var ids = items.map(function (value) {
-                    return value.id;
-                });
-
-                axboot.ajax({
-                    type: 'DELETE',
-                    url: '/api/v1/education/teachgridform?ids=' + ids.join(','),
-                    callback: function (res) {
-                        axToast.push('삭제 되었습니다');
-                        ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-                    },
-                });
-            }
-        });
     },
     ITEM_CLICK: function (caller, act, data) {
         //그리드에값을 바인딩 할수있으나 id를 통해서 조회후 바인딩하도록 프로세스 정의
@@ -76,11 +54,19 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         }
         axboot.ajax({
             type: 'GET',
-            url: '/api/v1/education/teachgridform/' + id,
+            url: '/api/v1/guest/' + id,
             callback: function (res) {
                 caller.formView01.setData(res);
+                // caller.gridView02.clear();
+                caller.gridView02.setData(res.reserveList);
             },
         });
+    },
+    EXCEL_DOWN: function (caller, act, data) {
+        var frm = $('.js-form').get(0);
+        frm.action = '/api/v1/guest/exceldown';
+        frm.enctype = 'application/x-www-form-urlencoded';
+        frm.submit();
     },
     FORM_CLEAR: function (caller, act, data) {
         axDialog.confirm({ msg: LANG('ax.script.form.clearconfirm') }, function () {
@@ -106,12 +92,7 @@ fnObj.pageStart = function () {
     this.pageButtonView.initView();
     this.searchView.initView();
     this.gridView01.initView();
-    this.formView01.initView({
-        viewMode: false,
-        editorReady: function () {
-            //_this.formView01.resize();
-        }
-    });
+    this.formView01.initView();
     this.gridView02.initView();
     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
 };
@@ -127,8 +108,8 @@ fnObj.pageButtonView = axboot.viewExtend({
             save: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
             },
-            fn1: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_DELETE);
+            excel: function () {
+                ACTIONS.dispatch(ACTIONS.EXCEL_DOWN);
             }
         });
     },
@@ -148,17 +129,17 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
             }
         });
 
-        this.useYn = $('.js-useYn').on('change', function () {
-            ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-        });
-        this.filter = $('.js-filter');
+        this.guestNm = $('.js-guestNm');
+        this.guestTel = $('.js-guestTel');
+        this.email = $('.js-email');
     },
     getData: function () {
         return {
             pageNumber: this.pageNumber || 0,
             pageSize: this.pageSize || 50,
-            useYn: this.useYn.val(),
-            filter: this.filter.val(),
+            guestNm: this.guestNm.val(),
+            guestTel: this.guestTel.val(),
+            email: this.email.val()
         };
     },
 });
@@ -177,11 +158,39 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             multipleSelect: true,
             target: $('[data-ax5grid="grid-view-01"]'),
             columns: [
-                { key: 'companyNm', label: "이름", width: 100, align: 'center' },
-                { key: 'ceo', label: "연락처", width: 100, align: 'center' },
-                { key: 'useYn', label: "이메일", width: 150, align: 'center' },
-                { key: 'bizno', label: "성별", width: 50, align: 'center' },
-                { key: 'bizno', label: "생년월일", width: 100, align: 'center' },
+                { key: 'guestNm', label: "이름", width: 100, align: 'center' },
+                { key: 'guestTel', label: "연락처", width: 100, align: 'center' },
+                { key: 'email', label: "이메일", width: 150, align: 'center' },
+                {
+                    key: 'gender',
+                    label: "성별",
+                    width: 50,
+                    align: 'center',
+                    formatter: function () {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['SEX_TYPE'].map[this.value];
+                    }
+                },
+                {
+                    key: 'brth',
+                    label: "생년월일",
+                    width: 100,
+                    align: 'center'/* ,
+                    formatter: function () {
+                        return ax5.util.date(new Date(this.value || ""), {return: "yyyy-MM-dd"});
+                        return moment(this.value).format('YYYY-MM-DD');
+                    } */
+                }, 
+                {
+                    key: 'langCd',
+                    label: "언어", 
+                    width: 80,
+                    align: 'center',
+                    formatter: function() {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['PMS_LANG'].map[this.value];
+                    },
+                 }
             ],
             body: {
                 onClick: function () {
@@ -199,15 +208,16 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
  */
 fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     getDefaultData: function () {
-        return { useYn: 'Y' };
+        return {};
     },
     getData: function () {
-        var _this = this;
+        // 아래 주석 처리 된 것은 editor 사용 흔적
+        /* var _this = this;
 
         var remark = "";
-        if (_this.editor) remark = _this.editor.getData();
+        if (_this.editor) remark = _this.editor.getData(); */
         var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
-        data.remark = remark;
+        // data.remark = remark;
         return $.extend({}, data);
     },
     setData: function (data) {
@@ -217,44 +227,12 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         this.model.setModel(data);
         this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경
 
-        var _this = this;
+        // 파일 업로드
+        /* var _this = this;
 
         if (typeof data.fileList != 'undefined' && data.fileList.length > 0) {
             _this.UPLOAD.setUploadedFiles(data.fileList);
-        }
-    },
-    validate: function () {
-        var item = this.model.get();
-
-        var rs = this.model.validate();
-        if (rs.error) {
-            axDialog.alert(LANG('ax.script.form.validate', rs.error[0].jquery.attr('title')), function () {
-                rs.error[0].jquery.focus();
-            });
-            return false;
-        }
-
-        // required 이외 벨리데이션 정의
-        var pattern;
-        if (item.email) {
-            pattern = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.(?:[A-Za-z0-9]{2,}?)$/i;
-            if (!pattern.test(item.email)) {
-                axDialog.alert('이메일 형식을 확인하세요.', function () {
-                    $('[data-ax-path="email"]').focus();
-                });
-                return false;
-            }
-        }
-
-        if (item.bizno && !(pattern = /^([0-9]{3})\-?([0-9]{2})\-?([0-9]{5})$/).test(item.bizno)) {
-            axDialog.alert('사업자번호 형식을 확인하세요.'),
-                function () {
-                    $('[data-ax-path="bizno"]').focus();
-                };
-            return false;
-        }
-
-        return true;
+        } */
     },
     initEvent: function () {
         axboot.buttonClick(this, 'data-form-view-01-btn', {
@@ -263,10 +241,17 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
             },
         });
     },
-    initView: function (obj) {
+    initView: function () {
         var _this = this; // fnObj.formView01
 
-        _this.target = $('.js-form');
+        _this.target = $('.guestForm');
+
+        _this.target.find('[data-ax5picker="date"]').ax5picker({
+            direction: 'auto',
+            content: {
+                type: 'date',
+            },
+        });
 
         this.model = new ax5.ui.binder();
         this.model.setModel(this.getDefaultData(), this.target);
@@ -291,16 +276,25 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
             multipleSelect: true, */
             target: $('[data-ax5grid="grid-view-02"]'),
             columns: [
-                { key: 'companyNm', label: "투숙일", width: 180, align: 'center' },
-                { key: 'ceo', label: "숙박수", width: 80, align: 'center' },
-                { key: 'useYn', label: "객실타입", width: 80, align: 'center' },
-                { key: 'bizno', label: "투숙번호", width: 180, align: 'center' },
+                { key: 'rsvDt', label: "투숙일", width: 180, align: 'center' },
+                { key: 'nightCnt', label: "숙박수", width: 80, align: 'center' },
+                {
+                    key: 'roomTypCd',
+                    label: "객실타입",
+                    width: 80,
+                    align: 'center',
+                    formatter: function () {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['ROOM_TYPE'].map[this.value];
+                    }
+                },
+                { key: 'rsvNum', label: "투숙번호", width: 180, align: 'center' },
             ],
             body: {
                 onClick: function () {
                     // grid.body.onClick.call({self: this, dIndex: 0, item: this.list[0]}); 아래는 이벤트 없으니 필요 없을지도
-                    /* this.self.select(this.dindex, { selectedClear: true });
-                    ACTIONS.dispatch(ACTIONS.ITEM_CLICK, this.item); */
+                    this.self.select(this.dindex, { selectedClear: true });
+                    // ACTIONS.dispatch(ACTIONS.ITEM_CLICK, this.item);
                 },
             },
         });

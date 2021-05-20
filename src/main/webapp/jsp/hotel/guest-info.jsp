@@ -85,6 +85,10 @@
                     </ax:tr> -->
                 </ax:tbl>
             </ax:form>
+
+            <form name="excelForm" class="js-form" method="post">
+            </form>
+
             <div class="H10"></div>
         </div>
 
@@ -111,19 +115,19 @@
                         </div>
                     </div>
 
-                    <form name="form" class="js-form">
-                        <ax:tbl clazz="ax-form-tbl" minWidth="500px">
+                    <form name="form" class="guestForm">
+                        <ax:tbl clazz="ax-form-tbl" minWidth="400px">
                             <div data-ax-tr>
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">이름</div>
                                     <div data-ax-td-wrap>
-                                        <input type="text" name="ceo" data-ax-path="ceo" class="form-control"  />
+                                        <input type="text" name="guestNm" data-ax-path="guestNm" class="form-control"  />
                                     </div>
                                 </div>
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">영문</div>
                                     <div data-ax-td-wrap>
-                                    <input type="text" name="ceo" data-ax-path="ceo" class="form-control"  />
+                                    <input type="text" name="guestNmEng" data-ax-path="guestNmEng" class="form-control"  />
                                     </div>
                                 </div>
                             </div>
@@ -131,13 +135,13 @@
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">연락처</div>
                                     <div data-ax-td-wrap>
-                                        <input type="text" name="ceo" data-ax-path="ceo" class="form-control"  />
+                                        <input type="text" name="guestTel" data-ax-path="guestTel" class="form-control"  />
                                     </div>
                                 </div>
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">이메일</div>
                                     <div data-ax-td-wrap>
-                                        <input type="text" name="ceo" data-ax-path="ceo" class="form-control"  />
+                                        <input type="text" name="email" data-ax-path="email" class="form-control"  />
                                     </div>
                                 </div>
                             </div>
@@ -145,20 +149,21 @@
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">언어</div>
                                     <div data-ax-td-wrap>
-                                        <ax:common-code groupCd="PMS_LANG" dataPath="lang" clazz="js-lang" />
+                                        <ax:common-code groupCd="PMS_LANG" dataPath="langCd" clazz="js-lang" />
                                     </div>
                                 </div>
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">생년월일</div>
                                     <div data-ax-td-wrap>
                                         <div data-ax-td style="width:70%">
-                                            <div data-ax-td-wrap>
-                                                <input type="date" class="form-control" />
+                                            <div class="input-group" data-ax5picker="date">
+                                                <input type="text" class="form-control js-brth" data-ax-path="brth" placeholder="YYYY-MM-DD">
+                                                <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                             </div>
                                         </div> 
                                         <div data-ax-td style="width:30%">
                                             <div data-ax-td-wrap>
-                                                <ax:common-code groupCd="SEX_TYPE" type="radio" dataPath="sex" clazz="js-sex" />
+                                                <ax:common-code groupCd="SEX_TYPE" type="radio" dataPath="gender" clazz="js-gender" />
                                             </div>
                                         </div>
                                     </div>
@@ -178,7 +183,7 @@
                             <ax:tr labelWidth="120px">
                                 <ax:td label="비고" width="100%">
                                     <!-- <textarea name="remark" id="remark" data-ax-path="remark" rows="5" class="form-control"></textarea> -->
-                                    <textarea name="editor1" id="editor1" data-ax-path="remark" rows="5" class="form-control"></textarea>
+                                    <textarea name = "rmk" data-ax-path="rmk" class="form-control js-rmk"></textarea>
                                 </ax:td>
                             </ax:tr>
 
