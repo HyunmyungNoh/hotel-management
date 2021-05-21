@@ -18,7 +18,7 @@
         <!-- 상단 버튼 -->
         <div data-page-buttons="">
             <div class="button-warp">
-                * 표시는 필수 항목 체크 부분 
+                <span style="color:red;">*</span>표시는 필수 항목 체크 부분 
                 <button type="button" class="btn btn-info" data-page-btn="save"><i class="cqc-save"></i> 저장</button>
                 <button type="button" class="btn btn-fn1" data-page-btn="fn1" data-form-view-01-btn="form-clear"><i class="cqc-circular-graph"></i> 신규 등록</button>    
             </div>
@@ -29,7 +29,7 @@
                 <ax:tbl clazz="ax-form-tbl">
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
-                            <div data-ax-td-label style="width:120px;">도착일</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>도착일</div>
                                 <div data-ax-td-wrap>
                                     <div class="input-group" data-ax5picker="date">
                                         <input type="text" class="form-control js-arrDt" data-ax-path="arrDt" placeholder="YYYY-MM-DD">
@@ -38,13 +38,13 @@
                                 </div>
                         </div>
                         <div data-ax-td style="width:30%">
-                            <div data-ax-td-label style="width:120px;">숙박수</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>숙박수</div>
                             <div data-ax-td-wrap>
-                            <input type="text" data-ax-path="nightCnt" class="form-control js-nightCnt"  />
+                            <input type="number" data-ax-path="nightCnt" class="form-control js-nightCnt"  />
                             </div>
                         </div>
                         <div data-ax-td style="width:35%">
-                            <div data-ax-td-label style="width:120px;">출발일</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>출발일</div>
                             <div data-ax-td-wrap>
                             <!-- <input type="date" data-ax-path="depDt" class="form-control js-depDt"  /> -->
                                 <div class="input-group" data-ax5picker="date">
@@ -57,21 +57,21 @@
 
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
-                            <div data-ax-td-label style="width:120px;">객실타입</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>객실타입</div>
                             <div data-ax-td-wrap>
                                 <ax:common-code groupCd="ROOM_TYPE" dataPath="roomTypCd" clazz="js-roomTypCd" />
                             </div>
                         </div>
                         <div data-ax-td style="width:30%">
-                            <div data-ax-td-label style="width:120px;">성인수</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>성인수</div>
                             <div data-ax-td-wrap>
-                            <input type="text" data-ax-path="adultCnt" class="form-control"  />
+                            <input type="number" data-ax-path="adultCnt" class="form-control"  />
                             </div>
                         </div>
                         <div data-ax-td style="width:35%">
-                            <div data-ax-td-label style="width:120px;">아동수</div>
+                            <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>아동수</div>
                             <div data-ax-td-wrap>
-                            <input type="text" data-ax-path="chldCnt" class="form-control"  />
+                            <input type="number" data-ax-path="chldCnt" class="form-control"  />
                             </div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                         <div data-ax-td style="width:100%">
                             <div data-ax-td-label style="width:120px;">투숙객
                                 <div class="ax-button-group">
-                                    <button type="button" class="btn btn-default" data-grid-view-01-btn="add"><i class="cqc-magnifier"></i> 검색</button>
+                                    <button type="button" class="btn btn-default" data-grid-view-01-btn="search"><i class="cqc-magnifier"></i> 검색</button>
                                 </div>
                             </div>
                             <div data-ax-td-wrap>
@@ -117,7 +117,7 @@
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">언어</div>
                                         <div data-ax-td-wrap>
-                                            <ax:common-code groupCd="PMS_LANG" dataPath="lang" clazz="js-lang" />
+                                            <ax:common-code groupCd="PMS_LANG" dataPath="langCd" clazz="js-lang" />
                                         </div>
                                     </div> 
                                     <div data-ax-td style="width:50%">
@@ -125,8 +125,14 @@
                                         <div data-ax-td-wrap>
                                             <!-- <div data-ax-tr> -->
                                                 <div data-ax-td style="width:70%">
-                                                    <div data-ax-td-wrap>
+                                                    <!-- <div data-ax-td-wrap>
                                                         <input type="date" data-ax-path="brth" class="form-control js-brth" />
+                                                    </div> -->
+                                                    <div data-ax-td-wrap>
+                                                        <div class="input-group" data-ax5picker="date">
+                                                            <input type="text" class="form-control js-brth" data-ax-path="brth" placeholder="YYYY-MM-DD">
+                                                            <span class="input-group-addon"><i class="cqc-calendar"></i></span>
+                                                        </div>
                                                     </div>
                                                 </div> 
                                                 <div data-ax-td style="width:30%">
@@ -170,7 +176,8 @@
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">선수금여부</div>
                                         <div data-ax-td-wrap>
-                                            <input type="checkbox" class="form-control js-advnYn" dataPath="advnYn" />
+                                            <!-- value 값 추가하여 checkYn 넣기는 하였으나 문제 시 삭제할 것 -->
+                                            <input type="checkbox" class="form-control js-advnYn" dataPath="advnYn" value="Y" checked/>
                                         </div>
                                     </div>                                                                      
                                 </div>
@@ -178,13 +185,14 @@
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">결제금액</div>
                                         <div data-ax-td-wrap>
-                                            <input type="text" data-ax-path="email" class="form-control js-email" />
+                                            <input type="text" data-ax-path="salePrc" data-ax5formatter="money" class="form-control js-salePrc" />
+                                            <!-- <input type="text" data-ax-path="salePrc" class="form-control js-salePrc" /> -->
                                         </div>
                                     </div> 
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">서비스금액</div>
                                         <div data-ax-td-wrap>
-                                            <input type="text" data-ax-path="email" class="form-control js-email" />
+                                            <input type="text" data-ax-path="svcPrc" data-ax5formatter="money" class="form-control js-svcPrc" />
                                         </div>
                                     </div>                                                                      
                                 </div>                                

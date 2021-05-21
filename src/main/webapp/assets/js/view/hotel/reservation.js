@@ -23,8 +23,8 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         saveList = saveList.concat(caller.gridView01.getData('deleted'));
 
         axboot.ajax({
-            type: 'PUT',
-            url: ['samples', 'parent'],
+            type: 'POST',
+            url: '/api/v1/reservation',
             data: JSON.stringify(saveList),
             callback: function (res) {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
@@ -32,7 +32,24 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             },
         });
     },
-    ITEM_CLICK: function (caller, act, data) {},
+    FIND_GUEST: function (caller, act, data) {
+        var data = caller.formView01.model.get()||{};
+        // if (!data) data = {};
+
+        axboot.modal.open({
+            width: 780,
+            height: 550,
+            iframe: {
+                param: 'guestNm=' + (data.getNm||'') + '&guestTel=' + (data.guestTel||'') + '&email=' + (data.email||''),
+                url: "guest-content.jsp"
+            },
+            header: { title: '투숙객 목록' },
+            callback: function (data) {
+                caller.formView01.setGuest(data);
+                this.close();
+            }
+        });
+    },
     FORM_CLEAR: function (caller, act, data) {
         axDialog.confirm({ msg: LANG('ax.script.form.clearconfirm') }, function () {
             if (this.key == 'ok') {
@@ -121,13 +138,16 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             target: $('[data-ax5grid="grid-view-01"]'),
             columns: [
                 {
-                    key: 'writeDt',
+                    key: 'memoDtti',
                     label: '작성일',
                     width: 160,
                     align: 'center',
                     editor: 'text',
+                    formatter: function() {
+                        return moment(this.value).format('YYYY-MM-DD');
+                    }
                 },
-                { key: 'value', label: '메모', width: '*', align: 'left', editor: 'text' },
+                { key: 'memoCn', label: '메모', width: '*', align: 'left', editor: 'text' },
             ],
             body: {
                 onClick: function () {
@@ -160,7 +180,7 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
     },
     addRow: function () {
         // this.target.addRow({__created__: true, writeDt: ax5.util.date(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 12), {return: 'yyyy-MM-dd'})}, "last");
-        this.target.addRow({ __created__: true, writeDt: moment().format('YYYY-MM-DD') }, 'last');
+        this.target.addRow({ __created__: true, memoDtti: moment().format('YYYY-MM-DD hh:mm'), delYn: 'Y' }, 'last');
         // this.target.addRow({__created__: true}, "last");
     },
 });
@@ -169,8 +189,19 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
  * formView
  */
 fnObj.formView01 = axboot.viewExtend(axboot.formView, {
+    setGuest: function(data) {
+        if (data) {
+            this.model.set('guestId', data.id||'');
+            this.model.set('guestNm', data.guestNm||'');
+            this.model.set('guestTel', data.guestTel||'');
+            this.model.set('email', data.email||'');
+            this.model.set('gender', data.gender||'');
+            this.model.set('langCd', data.langCd||'');
+            this.model.set('brth', data.brth||'');
+        }
+    },
     getDefaultData: function () {
-        return { useYn: 'Y' };
+        return {};
     },
     getData: function () {
         var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
@@ -224,24 +255,6 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         var nightCnt = moment(depDt).diff(moment(arrDt), 'days');
         $('[data-ax-path="nightCnt"]').val(nightCnt).trigger('change');
     },
-    /*
-    calcNight: function(depDt) {
-        if(!depDt) return;
-        var arrDt = $('.js-arrDt').val();
-        if(!arrDt) return;
-
-        var night = moment(arrDt).diff(moment(depDt), 'days');
-        this.model.set('nightCnt', night);
-    },
-    calcArrDt: function(arrDt) {
-        if(!value) return;
-        var depDt = $('.js-depDt').val();
-        if(!depDt) return;
-
-        var arrDt = moment(arrDt).subtract(value, 'day').format('yyyy-MM-DD');
-        this.model.set('depDt', depDt);
-    }, */
-
     initView: function () {
         var _this = this; // fnObj.formView01
 
@@ -273,6 +286,12 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
                 var depDt = $(this).val();
                 _this.calcNight(arrDt, depDt);
             });
+        });
+
+        axboot.buttonClick(this, 'data-grid-view-01-btn', {
+            search: function () {
+                ACTIONS.dispatch(ACTIONS.FIND_GUEST);
+            },
         });
     },
 });
