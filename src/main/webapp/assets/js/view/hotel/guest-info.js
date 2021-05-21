@@ -211,13 +211,7 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         return {};
     },
     getData: function () {
-        // 아래 주석 처리 된 것은 editor 사용 흔적
-        /* var _this = this;
-
-        var remark = "";
-        if (_this.editor) remark = _this.editor.getData(); */
         var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
-        // data.remark = remark;
         return $.extend({}, data);
     },
     setData: function (data) {
@@ -226,13 +220,6 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
         this.model.setModel(data);
         this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경
-
-        // 파일 업로드
-        /* var _this = this;
-
-        if (typeof data.fileList != 'undefined' && data.fileList.length > 0) {
-            _this.UPLOAD.setUploadedFiles(data.fileList);
-        } */
     },
     initEvent: function () {
         axboot.buttonClick(this, 'data-form-view-01-btn', {
@@ -257,13 +244,12 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         this.model.setModel(this.getDefaultData(), this.target);
         this.modelFormatter = new axboot.modelFormatter(this.model); // 모델 포메터 시작
 
-        // this.initUploader();
         this.initEvent();
     },
 });
 
 /**
- * gridView02
+ * gridView02 투숙이력
  */
  fnObj.gridView02 = axboot.viewExtend(axboot.gridView, {
     initView: function () {
@@ -276,7 +262,16 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
             multipleSelect: true, */
             target: $('[data-ax5grid="grid-view-02"]'),
             columns: [
-                { key: 'rsvDt', label: "투숙일", width: 180, align: 'center' },
+                {
+                    key: 'rsvDt',
+                    label: "투숙일",
+                    width: 180,
+                    align: 'center',
+                    formatter: function () {
+                        // if (!this.item) return '';
+                        return moment(this.item.arrDt).format('YY.M.D') + '-' + moment(this.item.depDt).format('YY.M.D');
+                    }
+                },
                 { key: 'nightCnt', label: "숙박수", width: 80, align: 'center' },
                 {
                     key: 'roomTypCd',

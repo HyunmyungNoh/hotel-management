@@ -23,7 +23,6 @@
         <ax:script-lang key="ax.script" var="LANG" />
         <ax:script-lang key="ax.base" var="COL" />
         <script type="text/javascript" src="https://cdn.rawgit.com/ax5ui/ax5ui-uploader/master/dist/ax5uploader.js"></script>
-        <!-- <script type="text/javascript" src="<c:url value='/assets/plugins-fix/ckeditor/ckeditor.js' />"></script> -->
         <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-info.js' />"></script>
     </jsp:attribute>
 
@@ -135,13 +134,13 @@
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">연락처</div>
                                     <div data-ax-td-wrap>
-                                        <input type="text" name="guestTel" data-ax-path="guestTel" class="form-control"  />
+                                        <input type="text" name="guestTel" data-ax-path="guestTel" class="form-control"  data-ax5formatter="phone" />
                                     </div>
                                 </div>
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">이메일</div>
                                     <div data-ax-td-wrap>
-                                        <input type="text" name="email" data-ax-path="email" class="form-control"  />
+                                        <input type="text" name="email" data-ax-path="email" class="form-control" />
                                     </div>
                                 </div>
                             </div>
