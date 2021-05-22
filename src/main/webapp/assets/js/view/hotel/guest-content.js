@@ -2,12 +2,15 @@ var modalParams = modalParams || {};
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
     PAGE_CLOSE: function (caller, act, data) {
-        if (parent) {
+        /* if (parent) {
             parent.axboot.modal.close(data);
-        }
+        } */
+        var modal = fnObj.getModal();
+        if (modal) modal.close();
+        if (opener) window.close();
     },
     PAGE_SEARCH: function (caller, act, data) {
-        var paramObj = $.extend(modalParams, data);
+        var paramObj = $.extend({}, modalParams, data);
 
         axboot.ajax({
             type: 'GET',
@@ -38,6 +41,18 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             },
         });
     },
+    PAGE_CHOICE: function (caller, act, data) {
+        if (!data) {
+            var list = caller.gridView01.getData('selected');
+            if (list.length > 0) data = list[0];
+        } if (data) {
+            var modal = fnObj.getModal();
+            if (modal) modal.callback(data);
+            if (opener) window.close();
+        } else {
+            alert(LANG('ax.script.requireslect'));
+        }
+    },
     dispatch: function (caller, act, data) {
         var result = ACTIONS.exec(caller, act, data);
         if (result != 'error') {
@@ -49,7 +64,17 @@ var ACTIONS = axboot.actionExtend(fnObj, {
     },
 });
 
-var CODE = {};
+// 모달창이 중첩될 때 처리
+fnObj.getModal = function() {
+    var modalView;
+    if (parent && modalParams.modalView && (modalView = parent[axboot.def.pageFunctionName][modalParams.modalView])) {
+        return modalView;
+    } else if (opener && modalParams.modalView && (modalView = opener[axboot.def.pageFunctionName][modalParams.modalView])) {
+        return modalView;
+    } else if (parent && parent.axboot && parent.axboot.modal) {
+        return parent.axboot.modal;
+    }
+}
 
 // fnObj 기본 함수 스타트와 리사이즈
 fnObj.pageStart = function () {
@@ -67,11 +92,8 @@ fnObj.pageResize = function () {};
 fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
         axboot.buttonClick(this, 'data-page-btn', {
-            save: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
-            },
-            delete: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_DELETE);
+            choice: function () {
+                ACTIONS.dispatch(ACTIONS.PAGE_CHOICE);
             },
             close: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_CLOSE);

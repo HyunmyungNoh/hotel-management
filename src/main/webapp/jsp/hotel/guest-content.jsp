@@ -7,6 +7,7 @@
     request.setAttribute("guestNm", requestUtils.getString("guestNm"));
     request.setAttribute("guestTel", requestUtils.getString("guestTel"));
     request.setAttribute("email", requestUtils.getString("email"));
+    request.setAttribute("modalView", requestUtils.getString("modalView"));
 %>
 <ax:set key="title" value="${pageName}"/>
 <ax:set key="page_desc" value="${PAGE_REMARK}"/>
@@ -15,7 +16,7 @@
 <ax:layout name="modal">
     <jsp:attribute name="script">
         <script>
-            var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}",email: "${email}"};
+            var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}",email: "${email}", modalView: "${modalView}"};
         </script>
         <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-content.js' />"></script>
         <ax:script-lang key="ax.script" var="LANG" />
@@ -34,7 +35,7 @@
                 <div data-fit-height-aside="form-view-01">
                     <form name="form" class="js-form">
                         <div data-ax-tbl class="ax-form-tbl">
-                            <input type="hidden" name="id" data-ax-path="id" class="form-control">
+                            <input type="hidden" name="id" data-ax-path="id" class="form-control" readonly>
                             <div data-ax-tr>
                                 <div data-ax-td style="width:40%">
                                     <div data-ax-td-label style="width:100px">이름</div>

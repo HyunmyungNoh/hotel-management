@@ -44,8 +44,8 @@ public class GuestService extends BaseService<Guest, Long> {
         List<Guest> entities = select()
                 .select(
                         Projections.fields(
-                                Guest.class, qGuest.id, qGuest.guestNm, qGuest.guestTel, qGuest.email,
-                                qGuest.gender, qGuest.brth, qGuest.langCd))
+                                Guest.class, qGuest.id, qGuest.guestNm, qGuest.guestNmEng, qGuest.guestTel, qGuest.email,
+                                qGuest.gender, qGuest.brth, qGuest.langCd, qGuest.rmk))
                 .from(qGuest)
                 .where(builder)
                 .orderBy(qGuest.guestNm.asc())
