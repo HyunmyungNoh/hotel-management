@@ -1,25 +1,7 @@
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
-    PAGE_SEARCH: function (caller, act, data) {
-        axboot.ajax({
-            type: 'GET',
-            url: ['samples', 'parent'],
-            data: caller.searchView.getData(),
-            callback: function (res) {
-                caller.gridView01.setData(res);
-            },
-            options: {
-                // axboot.ajax 함수에 2번째 인자는 필수가 아닙니다. ajax의 옵션을 전달하고자 할때 사용합니다.
-                onError: function (err) {
-                    console.log(err);
-                },
-            },
-        });
-
-        return false;
-    },
     PAGE_SAVE: function (caller, act, data) {
-        var saveList = [].concat(caller.gridView01.getData('modified'));
+        /* var saveList = [].concat(caller.gridView01.getData('modified'));
         saveList = saveList.concat(caller.gridView01.getData('deleted'));
 
         axboot.ajax({
@@ -30,17 +12,37 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
                 axToast.push('저장 되었습니다');
             },
-        });
+        }); */
+        if (caller.formView01.validate()) {
+            var item = caller.formView01.getData();
+
+            // 메모리스트
+            var memos = [].concat(caller.gridView01.getData());
+            memos = memos.concat(caller.gridView01.getData('deleted'));
+            item.memoList = memos;
+
+            if (!item.id) item.__created__ = true;
+            axboot.ajax({
+                type: 'POST',
+                url: '/api/v1/guest',
+                data: JSON.stringify(item),
+                callback: function (res) {
+                    axToast.push('저장 되었습니다');
+                    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+					caller.formView01.clear();
+                },
+            });
+        }
     },
     FIND_GUEST: function (caller, act, data) {
         var data = caller.formView01.model.get()||{};
-        // if (!data) data = {};
 
         axboot.modal.open({
             width: 780,
             height: 550,
             iframe: {
-                param: 'guestNm=' + (data.getNm||'') + '&guestTel=' + (data.guestTel||'') + '&email=' + (data.email||''),
+                param: 'guestNm=' + (data.guestNm||'') + '&guestTel=' + (data.guestTel||'')
+                        + '&email=' + (data.email||''),
                 url: "guest-content.jsp"
             },
             header: { title: '투숙객 목록' },
@@ -80,7 +82,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
 // fnObj 기본 함수 스타트와 리사이즈
 fnObj.pageStart = function () {
     this.pageButtonView.initView();
-    this.searchView.initView();
     this.gridView01.initView();
     this.formView01.initView();
 
@@ -92,9 +93,6 @@ fnObj.pageResize = function () {};
 fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
         axboot.buttonClick(this, 'data-page-btn', {
-            search: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-            },
             save: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
             },
@@ -106,23 +104,6 @@ fnObj.pageButtonView = axboot.viewExtend({
 });
 
 //== view 시작
-/**
- * searchView
- */
-fnObj.searchView = axboot.viewExtend(axboot.searchView, {
-    initView: function () {
-        this.target = $(document['searchView0']);
-        this.target.attr('onsubmit', 'return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);');
-        this.filter = $('#filter');
-    },
-    getData: function () {
-        return {
-            pageNumber: this.pageNumber,
-            pageSize: this.pageSize,
-            filter: this.filter.val(),
-        };
-    },
-});
 
 /**
  * gridView
@@ -180,8 +161,7 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
     },
     addRow: function () {
         // this.target.addRow({__created__: true, writeDt: ax5.util.date(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 12), {return: 'yyyy-MM-dd'})}, "last");
-        this.target.addRow({ __created__: true, memoDtti: moment().format('YYYY-MM-DD hh:mm'), delYn: 'Y' }, 'last');
-        // this.target.addRow({__created__: true}, "last");
+        this.target.addRow({ __created__: true, memoDtti: moment().format('YYYY-MM-DD hh:mm'), delYn: 'N' }, 'last');
     },
 });
 
@@ -193,6 +173,7 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         if (data) {
             this.model.set('guestId', data.id||'');
             this.model.set('guestNm', data.guestNm||'');
+            this.model.set('guestNmEng', data.guestNmEng||'');
             this.model.set('guestTel', data.guestTel||'');
             this.model.set('email', data.email||'');
             this.model.set('gender', data.gender||'');
