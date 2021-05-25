@@ -131,22 +131,21 @@
                                         <div data-ax-td-label style="width:120px">생년월일</div>
                                         <div data-ax-td-wrap>
                                             <!-- <div data-ax-tr> -->
-                                                <div data-ax-td style="width:70%">
-                                                    <!-- <div data-ax-td-wrap>
-                                                        <input type="date" data-ax-path="brth" class="form-control js-brth" />
-                                                    </div> -->
-                                                    <div data-ax-td-wrap>
+                                                <!-- <div data-ax-td style="width:70%"> -->
+                                                <div class="form-inline">
+                                                    <!-- <div data-ax-td-wrap> -->
                                                         <div class="input-group" data-ax5picker="date">
                                                             <input type="text" class="form-control js-brth" data-ax-path="brth" placeholder="YYYY-MM-DD">
                                                             <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                                         </div>
-                                                    </div>
-                                                </div> 
-                                                <div data-ax-td style="width:30%">
-                                                    <div data-ax-td-wrap>
+                                                    <!-- </div> -->
+                                                <!-- </div>  -->
+                                                <!-- <div data-ax-td style="width:30%"> -->
+                                                    <!-- <div data-ax-td-wrap> -->
                                                         <ax:common-code groupCd="SEX_TYPE" type="radio" dataPath="gender" clazz="js-gender" />
-                                                    </div>
-                                                </div>
+                                                    <!-- </div> -->
+                                                <!-- </div> -->
+                                                <!-- </div> -->
                                             <!-- </div> -->
                                         </div>
                                     </div>                                                                      

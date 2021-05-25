@@ -16,7 +16,7 @@
 <ax:layout name="modal">
     <jsp:attribute name="script">
         <script>
-            var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}",email: "${email}", modalView: "${modalView}"};
+            var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}", email: "${email}", modalView: "${modalView}"};
         </script>
         <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-content.js' />"></script>
         <ax:script-lang key="ax.script" var="LANG" />
@@ -74,16 +74,17 @@
                                 <div data-ax-td style="width:60%">
                                     <div data-ax-td-label style="width:100px">생년월일</div>
                                     <div data-ax-td-wrap>
-                                        <div data-ax-td style="width:70%">
+                                        <!-- <div data-ax-td style="width:70%"> -->
+                                        <div class="form-inline">
                                             <div class="input-group" data-ax5picker="date">
                                                 <input type="text" class="form-control js-brth" data-ax-path="brth" placeholder="YYYY-MM-DD">
                                                 <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                             </div>
-                                        </div> 
-                                        <div data-ax-td style="width:30%">
-                                            <div data-ax-td-wrap>
+                                        <!-- </div>  -->
+                                        <!-- <div data-ax-td style="width:30%"> -->
+                                            <!-- <div data-ax-td-wrap> -->
                                                 <ax:common-code groupCd="SEX_TYPE" type="radio" dataPath="gender" clazz="js-gender" />
-                                            </div>
+                                            <!-- </div> -->
                                         </div>
                                     </div>
                                 </div>

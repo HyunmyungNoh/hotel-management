@@ -154,17 +154,19 @@
                                 <div data-ax-td style="width:50%">
                                     <div data-ax-td-label style="width:120px;">생년월일</div>
                                     <div data-ax-td-wrap>
-                                        <div data-ax-td style="width:70%">
+                                        <!-- <div data-ax-td style="width:70%"> -->
+                                        <div class="form-inline">
                                             <div class="input-group" data-ax5picker="date">
                                                 <input type="text" class="form-control js-brth" data-ax-path="brth" placeholder="YYYY-MM-DD">
                                                 <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                             </div>
-                                        </div> 
-                                        <div data-ax-td style="width:30%">
-                                            <div data-ax-td-wrap>
+                                        <!-- </div>  -->
+                                        <!-- <div data-ax-td style="width:30%"> -->
+                                            <!-- <div data-ax-td-wrap> -->
                                                 <ax:common-code groupCd="SEX_TYPE" type="radio" dataPath="gender" clazz="js-gender" />
-                                            </div>
+                                            <!-- </div> -->
                                         </div>
+                                        <!-- </div> -->
                                     </div>
                                 </div>
                             </div>
