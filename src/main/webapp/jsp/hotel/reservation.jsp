@@ -24,8 +24,11 @@
             </div>
         </div>
         <!-- 하단 form -->
-        <div role="page-header">
+        <div role="page-header" style="overflow: scroll; width:*; height:500px;">
             <form name="form" class="js-form" onsubmit="return false;">
+                <div>
+                    <h3>예약번호: </h3> <span class="js-rsvNum"></span>
+                </div>
                 <ax:tbl clazz="ax-form-tbl">
                     <div>
                         <input type="hidden" name="id" data-ax-path="id" class="form-control js-id" />
