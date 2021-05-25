@@ -6,13 +6,16 @@ import edu.axboot.domain.hotel.reservation.Reservation;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.List;
 
-
+@DynamicInsert
+@DynamicUpdate
 @Getter
 @NoArgsConstructor
 @Entity
@@ -59,7 +62,7 @@ public class Guest extends BaseJpaModel<Long> {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@NotFound(action = NotFoundAction.IGNORE)
-	@JoinColumn(name = "GUEST_ID", referencedColumnName = "ID", insertable = false)
+	@JoinColumn(name = "GUEST_ID", referencedColumnName = "ID", insertable = false, updatable = false)
 	private List<Reservation> reserveList;
 
     @Override

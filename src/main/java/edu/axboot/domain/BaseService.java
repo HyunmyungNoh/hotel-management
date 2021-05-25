@@ -3,6 +3,8 @@ package edu.axboot.domain;
 import edu.axboot.domain.code.QCommonCode;
 import edu.axboot.domain.education.book.QEducationBook;
 import edu.axboot.domain.hotel.guest.QGuest;
+import edu.axboot.domain.hotel.reservation.QReservation;
+import edu.axboot.domain.hotel.reservation.memo.QMemo;
 import edu.axboot.domain.hotel.room.QRoom;
 import edu.axboot.domain.file.QCommonFile;
 import edu.axboot.domain.program.QProgram;
@@ -34,7 +36,9 @@ public class BaseService<T, ID extends Serializable> extends AXBootBaseService<T
     protected QEducationBook qEducationBook = QEducationBook.educationBook;
 
     protected QRoom qRoom = QRoom.room;
-    protected QGuest qGuest= QGuest.guest;
+    protected QGuest qGuest = QGuest.guest;
+    protected QReservation qReservation = QReservation.reservation;
+    protected QMemo qMemo = QMemo.memo;
 
     protected AXBootJPAQueryDSLRepository<T, ID> repository;
 

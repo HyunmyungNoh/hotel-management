@@ -27,6 +27,11 @@
         <div role="page-header">
             <form name="form" class="js-form" onsubmit="return false;">
                 <ax:tbl clazz="ax-form-tbl">
+                    <div>
+                        <input type="hidden" name="id" data-ax-path="id" class="form-control js-id" />
+                        <input type="hidden" name="guestId" data-ax-path="guestId" class="form-control js-guestId" />
+                        <input type="hidden" name="rmk" data-ax-path="rmk" class="form-control js-rmk" />
+                    </div>
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
                             <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>도착일</div>
@@ -53,7 +58,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </>
 
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
@@ -65,13 +70,13 @@
                         <div data-ax-td style="width:30%">
                             <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>성인수</div>
                             <div data-ax-td-wrap>
-                            <input type="number" data-ax-path="adultCnt" class="form-control"  />
+                            <input type="number" data-ax-path="adultCnt" class="form-control" min=1 />
                             </div>
                         </div>
                         <div data-ax-td style="width:35%">
                             <div data-ax-td-label style="width:120px;"><span style="color:red;">*</span>아동수</div>
                             <div data-ax-td-wrap>
-                            <input type="number" data-ax-path="chldCnt" class="form-control"  />
+                            <input type="number" data-ax-path="chldCnt" class="form-control" min=0 />
                             </div>
                         </div>
                     </div>
@@ -88,7 +93,6 @@
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">이름</div>
                                         <div data-ax-td-wrap>
-                                            <input type="hidden" data-ax-path="guestId" class="form-control js-guestId" />
                                             <input type="text" data-ax-path="guestNm" class="form-control js-guestNm" />
                                         </div>
                                     </div> 
@@ -103,7 +107,7 @@
                                     <div data-ax-td style="width:50%">
                                         <div data-ax-td-label style="width:120px">연락처</div>
                                         <div data-ax-td-wrap>
-                                            <input type="text" data-ax-path="guestTel" class="form-control js-guestTel" />
+                                            <input type="text" data-ax-path="guestTel" data-ax5formatter="phone" class="form-control js-guestTel" />
                                         </div>
                                     </div> 
                                     <div data-ax-td style="width:50%">

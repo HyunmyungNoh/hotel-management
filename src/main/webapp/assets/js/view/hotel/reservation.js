@@ -1,35 +1,24 @@
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
     PAGE_SAVE: function (caller, act, data) {
-        /* var saveList = [].concat(caller.gridView01.getData('modified'));
-        saveList = saveList.concat(caller.gridView01.getData('deleted'));
-
-        axboot.ajax({
-            type: 'POST',
-            url: '/api/v1/reservation',
-            data: JSON.stringify(saveList),
-            callback: function (res) {
-                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-                axToast.push('저장 되었습니다');
-            },
-        }); */
         if (caller.formView01.validate()) {
             var item = caller.formView01.getData();
 
             // 메모리스트
-            var memos = [].concat(caller.gridView01.getData());
-            memos = memos.concat(caller.gridView01.getData('deleted'));
-            item.memoList = memos;
+            var memoList = [].concat(caller.gridView01.getData());
+            memoList = memoList.concat(caller.gridView01.getData('deleted'));
+            item.memos = memoList;
 
-            if (!item.id) item.__created__ = true;
+            // if (!item.id) item.__created__ = true;
             axboot.ajax({
                 type: 'POST',
-                url: '/api/v1/guest',
+                url: '/api/v1/reservation',
                 data: JSON.stringify(item),
                 callback: function (res) {
                     axToast.push('저장 되었습니다');
                     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
 					caller.formView01.clear();
+                    caller.gridView01.clear();
                 },
             });
         }
@@ -58,7 +47,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 caller.gridView01.clear();
                 caller.formView01.clear();
                 console.log('지워졌습니다');
-                // $('[data-ax-path="companyNm"]').focus();
+                $('[data-ax-path="arrDt"]').focus();
             }
         });
     },
@@ -179,6 +168,7 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
             this.model.set('gender', data.gender||'');
             this.model.set('langCd', data.langCd||'');
             this.model.set('brth', data.brth||'');
+            this.model.set('rmk', data.rmk||'');
         }
     },
     getDefaultData: function () {
@@ -186,6 +176,9 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     },
     getData: function () {
         var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
+        if ($('.js-advnYn').is(':checked') == true) {
+            data.advnYn = 'Y';
+        } else data.advnYn = 'N';
         return $.extend({}, data);
     },
     setData: function (data) {
@@ -228,14 +221,59 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
         return true;
     },
-    calcDepDt: function (arrDt, nightCnt) {
-        var depDt = moment(arrDt).add(nightCnt, 'days').format('yyyy-MM-DD');
-        $('[data-ax-path="depDt"]').val(depDt).trigger('change');
+    InitEvent: function () {
+        var _this = this;
+
+        axboot.buttonClick(this, 'data-grid-view-01-btn', {
+            search: function () {
+                ACTIONS.dispatch(ACTIONS.FIND_GUEST);
+            },
+        });
+
+        // 날짜 계산 분기
+        this.arrDt.on('change', function () {
+            var arrDt = $(this).val();
+            var depDt = _this.depDt.val();
+            if(!arrDt || !depDt) return;
+
+            var resArrDt = moment(arrDt);
+            var resDepDt = moment(depDt);
+            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            if (nightCnt < 1) {
+                nightCnt = 1;
+                _this.model.set('depDt', resArrDt.add(nigntCnt, 'days').format('yyyy-MM-DD'));
+            }
+            _this.model.set('nightCnt', nightCnt);
+        });
+
+        this.depDt.on('change', function () {
+            var arrDt = _this.arrDt.val();
+            var depDt = $(this).val();
+            if(!arrDt || !depDt) return;
+
+            var resArrDt = moment(arrDt);
+            var resDepDt = moment(depDt);
+            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            if (nightCnt < 1) {
+                nightCnt = 1;
+                _this.model.set('depDt', resArrDt.add(-nigntCnt, 'days').format('yyyy-MM-DD'));
+            }
+            _this.model.set('nightCnt', nightCnt);
+        });
+        
+        this.nightCnt.on('change', function () {
+            var arrDt = _this.arrDt.val();
+            if(!arrDt) return;
+
+            var nightCnt = _this.nightCnt.val();
+            if (nightCnt < 1) {
+                nightCnt = 1;
+                _this.model.set('nightCnt', nightCnt);
+            }
+            _this.model.set('depDt', moment(arrDt).add(nightCnt, 'days').format('yyyy-MM-DD'));
+        });
     },
-    calcNight: function (arrDt, depDt) {
-        var nightCnt = moment(depDt).diff(moment(arrDt), 'days');
-        $('[data-ax-path="nightCnt"]').val(nightCnt).trigger('change');
-    },
+
     initView: function () {
         var _this = this; // fnObj.formView01
 
@@ -252,27 +290,10 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         this.model.setModel(this.getDefaultData(), this.target);
         this.modelFormatter = new axboot.modelFormatter(this.model); // 모델 포메터 시작
 
-        /* 분기를 여기서 두 번 태움  */
-        $('.js-arrDt').on('change', function () {
-            var arrDt = $(this).val();
-            $('.js-nightCnt').on('change', function () {
-                var nigntCnt = $(this).val();
-                _this.calcDepDt(arrDt, nigntCnt);
-            });
-        });
+        this.arrDt = $('[data-ax-path="arrDt"]');
+        this.depDt = $('[data-ax-path="depDt"]');
+        this.nightCnt = $('[data-ax-path="nightCnt"]');
 
-        $('.js-arrDt').on('change', function () {
-            var arrDt = $(this).val();
-            $('.js-depDt').on('change', function () {
-                var depDt = $(this).val();
-                _this.calcNight(arrDt, depDt);
-            });
-        });
-
-        axboot.buttonClick(this, 'data-grid-view-01-btn', {
-            search: function () {
-                ACTIONS.dispatch(ACTIONS.FIND_GUEST);
-            },
-        });
+        this.InitEvent();
     },
 });
