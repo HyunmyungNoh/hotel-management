@@ -1,5 +1,23 @@
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
+    PAGE_SEARCH: function (caller, act, data) {
+        if (data) {
+            axboot.ajax({
+                type: 'GET',
+                url: '/api/v1/reservation/' + data,
+                callback: function (res) {
+                    caller.formView01.clear();
+                    caller.formView01.setData(res);
+                },
+                options: {
+                    onerror: function (err) {
+                        console.log(error);
+                    }
+                }
+            })
+        }
+        return false;   // 이 부분을 왜 넣는지?
+    },
     PAGE_SAVE: function (caller, act, data) {
         if (caller.formView01.validate()) {
             var item = caller.formView01.getData();
@@ -15,10 +33,12 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 url: '/api/v1/reservation',
                 data: JSON.stringify(item),
                 callback: function (res) {
-                    axToast.push('저장 되었습니다');
-                    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-					caller.formView01.clear();
-                    caller.gridView01.clear();
+                    // axToast.push('저장 되었습니다');
+                    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, res.map.rsvNum);  // 나중에 promise로 리팩토링
+                    axToast.push(res.map.message);
+                    
+					// caller.formView01.clear();
+                    // caller.gridView01.clear();
                 },
             });
         }
@@ -46,6 +66,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             if (this.key == 'ok') {
                 caller.gridView01.clear();
                 caller.formView01.clear();
+                $('.js-rsvNum').empty();
                 console.log('지워졌습니다');
                 $('[data-ax-path="arrDt"]').focus();
             }
@@ -172,7 +193,7 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
         }
     },
     getDefaultData: function () {
-        return {};
+        return {adultCnt: '1', chldCnt: '0'};
     },
     getData: function () {
         var data = this.modelFormatter.getClearData(this.model.get()); // 모델의 값을 포멧팅 전 값으로 치환.
@@ -184,6 +205,9 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     setData: function (data) {
         if (typeof data === 'undefined') data = this.getDefaultData();
         data = $.extend({}, data);
+        if (data.rsvNum) {
+            $('.js-rsvNum').text('예약번호: ' + data.rsvNum);
+        }
 
         this.model.setModel(data);
         this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경

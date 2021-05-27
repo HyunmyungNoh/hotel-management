@@ -1,10 +1,12 @@
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
     PAGE_SEARCH: function (caller, act, data) {
+        var paramObj = $.extend(caller.searchView.getData(), data);
         axboot.ajax({
             type: "GET",
+            // url: "api/v1/reservation",
             url: ["samples", "parent"],
-            data: caller.searchView.getData(),
+            data: paramObj,
             callback: function (res) {
                 caller.gridView01.setData(res);
             },
@@ -15,7 +17,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 }
             }
         });
-
         return false;
     },
     PAGE_SAVE: function (caller, act, data) {
@@ -33,7 +34,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         });
     },
     ITEM_CLICK: function (caller, act, data) {
-
     },
     ITEM_ADD: function (caller, act, data) {
         caller.gridView01.addRow();
@@ -68,16 +68,19 @@ fnObj.pageResize = function () {
 
 fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
-        axboot.buttonClick(this, "data-page-btn", {
-            "search": function () {
+        axboot.buttonClick(this, 'data-page-btn', {
+            search: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
             },
-            "save": function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
+            clear: function () {
+                fnObj.searchView.clear();
             },
-            "excel": function () {
-
-            }
+            excel: function () {
+                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+            },
+            /*             "save": function () {
+                ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
+            }, */
         });
     }
 });
@@ -87,15 +90,41 @@ fnObj.pageButtonView = axboot.viewExtend({
  * searchView
  */
 fnObj.searchView = axboot.viewExtend(axboot.searchView, {
+    clear: function () {
+        this.target.get(0).reset();
+    },
     initView: function () {
-        this.target = $(document["searchView0"]);
-        this.target.attr("onsubmit", "return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);");
-        this.filter = $("#filter");
+        this.target = $('.js-searchForm');
+        // this.target.attr("onsubmit", "return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);");
+        this.target.attr("onsubmit", "return false;");
+        this.target.on('keydown.search', 'input, .form-control', function (e) {
+            if (e.keyCode === 13) {
+                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+            }
+        });
+
+        // 불필요시 삭제 예정
+        this.roomTypCd = $('.js-roomTypCd').on('change', function () {
+            ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+        });
+
+        this.filter = $('.js-filter');
+
+        $('.js-sttusCd-all').on('change', function () {
+            var _this = $(this),    // '전체' 박스를 가리킴
+                value = _this.val();    // 이 '전체' 박스의 값을 가져옴
+            var checked;
+            if (value === '') {
+                checked = _this.prop("checked");
+                $('input[name="sttusCd"]').prop("checked", checked);
+            } 
+        });
     },
     getData: function () {
         return {
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
+            roomTypCd:this.roomTypCd.val(),
             filter: this.filter.val()
         }
     }
@@ -115,12 +144,57 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             multipleSelect: true,
             target: $('[data-ax5grid="grid-view-01"]'),
             columns: [
-                {key: "key", label: "KEY", width: 160, align: "left", editor: "text"},
-                {key: "value", label: "VALUE", width: 350, align: "left", editor: "text"},
-                {key: "etc1", label: "ETC1", width: 100, align: "center", editor: "text"},
-                {key: "etc2", label: "ETC2", width: 100, align: "center", editor: "text"},
-                {key: "etc3", label: "ETC3", width: 100, align: "center", editor: "text"},
-                {key: "etc4", label: "ETC4", width: 100, align: "center", editor: "text"}
+                {key: "rsvNum", label: "예약번호", width: 160, align: "center"},
+                {
+                    key: "rsvDt",
+                    label: "예약일",
+                    width: 100,
+                    align: "center"
+                },
+                {key: "guestNm", label: "투숙객", width: 100, align: "center", editor: "text"},
+                {
+                    key: "roomTypCd",
+                    label: "객실타입",
+                    width: 100, 
+                    align: "center", 
+                    formatter: function() {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['ROOM_TYPE'].map[this.value];
+                    }
+                },
+                {key: "roomNum", label: "객실번호", width: 100, align: "center", editor: "text"},
+                {key: "arrDt", label: "도착일", width: 100, align: "center", editor: "text"},
+                {key: "depDt", label: "출발일", width: 100, align: "center", editor: "text"},
+                {
+                    key: "srcCd",
+                    label: "예약경로",
+                    width: 100,
+                    align: "center",
+                    formatter: function() {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['PMS_RESERVATION_ROUTE'].map[this.value];
+                    }
+                },
+                {
+                    key: "saleTypCd",
+                    label: "판매유형",
+                    width: 100,
+                    align: "center",
+                    formatter: function() {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['PMS_RESERVATION_ROUTE'].map[this.value];
+                    }
+                },
+                {
+                    key: "sttusCd",
+                    label: "상태",
+                    width: 100,
+                    align: "center",
+                    formatter: function() {
+                        if (!this.value) return '';
+                        return parent.COMMON_CODE['ROOM_STATUS'].map[this.value];
+                    }
+                }
             ],
             body: {
                 onClick: function () {

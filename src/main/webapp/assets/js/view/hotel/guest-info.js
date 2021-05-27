@@ -24,13 +24,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         if (caller.formView01.validate()) {
             var item = caller.formView01.getData();
 
-            /* var fileIds = [];
-            var files = ax5.util.deepCopy(caller.formView01.UPLOAD.uploadedFiles);
-            $.each(files, function(idx, o) {
-                fileIds.push(o.id);
-            });
-            item.fileIdList = fileIds; */
-
             if (!item.id) item.__created__ = true;
             axboot.ajax({
                 type: 'POST',

@@ -27,13 +27,13 @@
         <div role="page-header" style="overflow: scroll; width:*; height:500px;">
             <form name="form" class="js-form" onsubmit="return false;">
                 <div>
-                    <h3>예약번호: </h3> <span class="js-rsvNum"></span>
+                    <h3><span class="js-rsvNum"></span></h3>
                 </div>
                 <ax:tbl clazz="ax-form-tbl">
                     <div>
-                        <input type="hidden" name="id" data-ax-path="id" class="form-control js-id" />
-                        <input type="hidden" name="guestId" data-ax-path="guestId" class="form-control js-guestId" />
-                        <input type="hidden" name="rmk" data-ax-path="rmk" class="form-control js-rmk" />
+                        <input type="hidden" name="id" data-ax-path="id" class="js-id" />
+                        <input type="hidden" name="guestId" data-ax-path="guestId" class="js-guestId" />
+                        <input type="hidden" name="rmk" data-ax-path="rmk" class="js-rmk" />
                     </div>
                     <div data-ax-tr>
                         <div data-ax-td style="width:35%">
