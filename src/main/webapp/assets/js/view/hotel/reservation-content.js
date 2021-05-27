@@ -106,8 +106,8 @@ fnObj.pageButtonView = axboot.viewExtend({
             save: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
             },
-            fn1: function () {
-                ACTIONS.dispatch(ACTIONS.FORM_CLEAR);
+            close: function () {
+                ACTIONS.dispatch(ACTIONS.PAGE_CLOSE);
             },
         });
     },

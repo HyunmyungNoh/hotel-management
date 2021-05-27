@@ -36,7 +36,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         if(!data) data = {};
         axboot.modal.open({
             width: 1000,
-            height: 800,
+            height: 700,
             iframe: {
                 param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
                 url: "reservation-content.jsp"

@@ -19,8 +19,7 @@
         <div data-page-buttons="">
             <div class="button-warp">
                 <span style="color:red;">*</span>표시는 필수 항목 체크 부분 
-                <button type="button" class="btn btn-info" data-page-btn="save"><i class="cqc-save"></i> 저장</button>
-                <button type="button" class="btn btn-fn1" data-page-btn="fn1" data-form-view-01-btn="form-clear"><i class="cqc-circular-graph"></i> 신규 등록</button>    
+                <button type="button" class="btn btn-info" data-page-btn="save"><i class="cqc-save"></i> 저장</button>  
             </div>
         </div>
         <!-- 하단 form -->
@@ -226,6 +225,9 @@
                 </ax:tbl>
             </form>
         </div>
-
+            <div class="button-warp"  style="text-align: center; padding-top: 10px;">
+                <button type="button" class="btn btn-fn1" data-page-btn="save">저장</button>
+                <button type="button" class="btn btn-default" data-page-btn="close"><ax:lang id="ax.admin.sample.modal.button.close"/></button>
+            </div>
     </jsp:body>
 </ax:layout>
