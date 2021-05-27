@@ -195,7 +195,7 @@ public class Reservation extends BaseJpaModel<Long> {
 		this.rsvDt = rsvDt;
 		this.sno = sno;
 		this.rsvNum = "R" + rsvDt.replaceAll("-", "") + StringUtils.leftPad(Integer.toString(sno), 3, '0');
-		this.sttusCd = "RSV";
+		this.sttusCd = "RSV_01";
 	}
 
 	// 화면 단에서 수정된 내용들 받음

@@ -41,9 +41,9 @@
                         <div data-ax-td-label>예약일</div>
                             <div data-ax-td-wrap>
                                 <div class="input-group" data-ax5picker="date">
-                                    <input type="text" class="form-control js-rsvDt-start" placeholder="yyyy-mm-dd">
+                                    <input type="text" class="form-control js-rsvDtStart" placeholder="yyyy-mm-dd">
                                     <span class="input-group-addon">~</span>
-                                    <input type="text" class="form-control js-rsvDt-end" placeholder="yyyy-mm-dd">
+                                    <input type="text" class="form-control js-rsvDtEnd" placeholder="yyyy-mm-dd">
                                     <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                 </div>
                         </div>
@@ -60,9 +60,9 @@
                         <div data-ax-td-label>도착일</div>
                             <div data-ax-td-wrap>
                                 <div class="input-group" data-ax5picker="date">
-                                    <input type="text" class="form-control js-arrDt-start" placeholder="yyyy-mm-dd">
+                                    <input type="text" class="form-control js-arrDtStart" placeholder="yyyy-mm-dd">
                                     <span class="input-group-addon">~</span>
-                                    <input type="text" class="form-control js-arrDt-end" placeholder="yyyy-mm-dd">
+                                    <input type="text" class="form-control js-arrDtEnd" placeholder="yyyy-mm-dd">
                                     <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                 </div>
                             </div>
@@ -71,9 +71,9 @@
                         <div data-ax-td-label>출발일</div>
                         <div data-ax-td-wrap>
                             <div class="input-group" data-ax5picker="date">
-                                <input type="text" class="form-control js-depDt-start" placeholder="yyyy-mm-dd">
+                                <input type="text" class="form-control js-depDtStart" placeholder="yyyy-mm-dd">
                                 <span class="input-group-addon">~</span>
-                                <input type="text" class="form-control js-depDt-end" placeholder="yyyy-mm-dd">
+                                <input type="text" class="form-control js-depDtEnd" placeholder="yyyy-mm-dd">
                                 <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                 </form>
             </div>
             <div class="row">
-                <div data-ax5grid="grid-view-01" data-fit-height-content="grid-view-01" style="height: 300px;"></div>
+                <div data-ax5grid="grid-view-01" data-fit-height-content="grid-view-01" style="height: 500px;"></div>
             </div>
         </div>
     </jsp:body>

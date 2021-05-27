@@ -1,7 +1,11 @@
 package edu.axboot.domain.hotel.reservation;
 
+import com.chequer.axboot.core.api.response.Responses;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import edu.axboot.controllers.reservedto.MemoSaveRequestDto;
+import edu.axboot.controllers.reservedto.RsvListResponseDto;
+import edu.axboot.controllers.reservedto.RsvResponseDto;
 import edu.axboot.controllers.reservedto.RsvSaveRequestDto;
 import edu.axboot.domain.hotel.guest.Guest;
 import edu.axboot.domain.hotel.guest.GuestRepository;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -185,5 +190,75 @@ public class ReservationService extends BaseService<Reservation, Long> {
                 memo.delete();  // 삭제라면 해당 메모 가져와서 delete 처리
             }
         }
+    }
+
+    // id 로 해당 숙박 정보 다 불러옴
+    public RsvResponseDto findById(Long id) {
+        Reservation reservation = reservationRepository.findOne(id);
+        if(reservation == null) throw new IllegalArgumentException("해당 예약 정보가 없습니다. id=" + id);
+        return new RsvResponseDto(reservation);
+    }
+
+    // 검색어가 주어질 시 숙박 리스트 가져옴
+    // filter에는 투숙객명, 전화번호, 이메일
+    public List<RsvListResponseDto> findBy(String filter, String rsvNum, String roomTypCd,
+                                           String rsvSttDate, String rsvEndDate, String arrSttDate, String arrEndDate, String depSttDate, String depEndDate,
+                                           List<String> sttusCds) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 투숙객명, 전화번호, 이메일
+        if (isNotEmpty(filter)) {
+            builder.and(qReservation.guestNm.contains(filter)
+                .or(qReservation.guestTel.contains(filter))
+                .or(qReservation.email.contains(filter))
+            );
+        }
+        // 예약번호
+        if (isNotEmpty(rsvNum)) builder.and(qReservation.rsvNum.contains(rsvNum));
+        // 객실 타입
+        if (isNotEmpty(roomTypCd)) builder.and(qReservation.roomTypCd.eq(roomTypCd));
+        // 예약일
+        if (isNotEmpty(rsvSttDate)) {
+            if (isNotEmpty(rsvEndDate)) {
+                builder.and(qReservation.rsvDt.between(rsvSttDate, rsvEndDate));
+            } else builder.and(qReservation.rsvDt.goe(rsvSttDate));
+        }
+        // 도착일
+        if (isNotEmpty(arrSttDate)) {
+            if (isNotEmpty(arrEndDate)) {
+                builder.and(qReservation.arrDt.between(arrSttDate, arrEndDate));
+            } else builder.and(qReservation.arrDt.goe(arrSttDate));
+        }
+        // 출발일
+        if (isNotEmpty(depSttDate)) {
+            if (isNotEmpty(depEndDate)) {
+                builder.and(qReservation.depDt.between(depSttDate, rsvEndDate));
+            } else builder.and(qReservation.depDt.goe(depSttDate));
+        }
+
+        // 예약 상태
+        if (sttusCds != null) {
+            if (sttusCds.size() > 0) {
+                BooleanBuilder builder2 = new BooleanBuilder();
+                for (String sttusCd : sttusCds) {
+                    builder2.or(qReservation.sttusCd.eq(sttusCd));
+                }
+                builder.and(builder2);
+            }
+        }
+
+        List<Reservation> entities = select().select(
+                Projections.fields(Reservation.class,
+                        qReservation.id, qReservation.rsvNum, qReservation.rsvDt, qReservation.arrDt, qReservation.depDt, /*qReservation.nightCnt,*/
+                        qReservation.roomTypCd, qReservation.roomNum, qReservation.saleTypCd, qReservation.srcCd, qReservation.sttusCd,
+                        /*qReservation.salePrc, */qReservation.guestNm))
+                .from(qReservation)
+                .where(builder)
+                .orderBy(qReservation.rsvNum.asc())
+                .fetch();
+
+        return entities.stream()
+                .map(RsvListResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

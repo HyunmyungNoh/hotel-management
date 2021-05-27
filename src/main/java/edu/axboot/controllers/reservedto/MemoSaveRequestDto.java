@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 public class MemoSaveRequestDto {
     private Long id;
 
+    //Timestamp 형으로 변환 위해 다음과 같은 조치
     @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     private Timestamp memoDtti;
     private String memoCn;

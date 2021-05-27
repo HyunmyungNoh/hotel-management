@@ -16,9 +16,7 @@ public class RsvSaveRequestDto {
     // 화면 단에서 받아오는 항목 위주이기 때문에 예약번호, 일련번호 등은 없음
     private Long id;
     private String arrDt;
-    private String arrTime;
     private String depDt;
-    private String depTime;
     private Integer nightCnt;
     private String roomTypCd;
     private Integer adultCnt;
@@ -46,16 +44,14 @@ public class RsvSaveRequestDto {
 
     // 단위 테스트를 위한 builder, 만약 테스트가 필요없다면 없어도 되는 부분
     @Builder
-    public RsvSaveRequestDto(Long id, String arrDt, String arrTime, String depDt, String depTime, Integer nightCnt,
+    public RsvSaveRequestDto(Long id, String arrDt, String depDt, Integer nightCnt,
                              String roomTypCd, Integer adultCnt, Integer chldCnt,
                              String saleTypCd, String srcCd, String payCd, String advnYn, BigDecimal salePrc, BigDecimal svcPrc,
                              Long guestId, String guestNm, String guestNmEng, String guestTel, String email, String langCd, String brth, String gender, String rmk,
                              List<MemoSaveRequestDto> memos) {
         this.id = id;
         this.arrDt = arrDt;
-        this.arrTime = arrTime;
         this.depDt = depDt;
-        this.depTime = depTime;
         this.nightCnt = nightCnt;
         this.roomTypCd = roomTypCd;
         this.adultCnt = adultCnt;
@@ -86,9 +82,7 @@ public class RsvSaveRequestDto {
         return Reservation.builder()
                 .id(id)
                 .arrDt(arrDt)
-                .arrTime(arrTime)
                 .depDt(depDt)
-                .depTime(depTime)
                 .nightCnt(nightCnt)
                 .roomTypCd(roomTypCd)
                 .adultCnt(adultCnt)

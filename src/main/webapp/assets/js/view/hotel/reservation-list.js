@@ -3,9 +3,8 @@ var ACTIONS = axboot.actionExtend(fnObj, {
     PAGE_SEARCH: function (caller, act, data) {
         var paramObj = $.extend(caller.searchView.getData(), data);
         axboot.ajax({
-            type: "GET",
-            // url: "api/v1/reservation",
-            url: ["samples", "parent"],
+            type: 'GET',
+            url: '/api/v1/reservation',
             data: paramObj,
             callback: function (res) {
                 caller.gridView01.setData(res);
@@ -30,6 +29,24 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             callback: function (res) {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
                 axToast.push("저장 되었습니다");
+            }
+        });
+    },
+    RSV_OPEN: function (caller, act, data) {
+        if(!data) data = {};
+        axboot.modal.open({
+            width: 1000,
+            height: 800,
+            iframe: {
+                param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
+                url: "reservation-content.jsp"
+            },
+            header: {title: "예약 조회"},
+            callback: function (data) {
+                if (data && data.dirty) {
+                    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+                }
+                this.close();
             }
         });
     },
@@ -61,9 +78,7 @@ fnObj.pageStart = function () {
     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
 };
 
-fnObj.pageResize = function () {
-
-};
+fnObj.pageResize = function () {};
 
 
 fnObj.pageButtonView = axboot.viewExtend({
@@ -103,12 +118,30 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
             }
         });
 
-        // 불필요시 삭제 예정
-        this.roomTypCd = $('.js-roomTypCd').on('change', function () {
-            ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+        this.target.find('[data-ax5picker="date"]').ax5picker({
+            direction: 'auto',
+            content: {
+                type: 'date',
+            }
         });
 
+        // 불필요시 삭제 예정
+/*         this.roomTypCd = $('.js-roomTypCd').on('change', function () {
+            ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+        }); */
+
         this.filter = $('.js-filter');
+        this.rsvNum = $('.js-rsvNum');
+        
+        this.rsvDtStart = this.target.find('.js-rsvDtstart');
+        this.rsvDtEnd = this.target.find('.js-rsvDtEnd');
+        this.arrDtStart = this.target.find('.js-arrDtStart');
+        this.arrDtEnd = this.target.find('.js-arrDtEnd');
+        this.depDtStart = this.target.find('.js-depDtStart');
+        this.depDtEnd = this.target.find('.js-depDtEnd');
+        this.roomTypCd = this.target.find('.js-roomTypCd');
+
+        this.sttusCd = this.target.find('input[name="sttusCd"]');
 
         $('.js-sttusCd-all').on('change', function () {
             var _this = $(this),    // '전체' 박스를 가리킴
@@ -121,11 +154,29 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
         });
     },
     getData: function () {
+/*         var sttusCds = [];
+        this.sttusCd.each(function () {
+            if($(this).is(':checked')) sttusCds.push($(this).val());
+        });  */
+        var sttusCds = '';
+        $('input[name="sttusCd"]:checked').each(function (index) {
+            if (index != 0) sttusCds += ',';
+            sttusCds += $(this).val();
+        });
+
         return {
-            pageNumber: this.pageNumber,
-            pageSize: this.pageSize,
+            pageNumber: this.pageNumber || 0,
+            pageSize: this.pageSize || 50,
+            filter: this.filter.val(),
+            rsvNum: this.rsvNum.val(),
+            rsvDtStart: this.rsvDtStart.val(),
+            rsvDtEnd: this.rsvDtEnd.val(),
+            arrDtStart: this.arrDtStart.val(),
+            arrDtEnd: this.arrDtEnd.val(),
+            depDtStart: this.depDtStart.val(),
+            depDtEnd: this.depDtEnd.val(),
+            sttusCd: sttusCds,
             roomTypCd:this.roomTypCd.val(),
-            filter: this.filter.val()
         }
     }
 });
@@ -182,7 +233,7 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
                     align: "center",
                     formatter: function() {
                         if (!this.value) return '';
-                        return parent.COMMON_CODE['PMS_RESERVATION_ROUTE'].map[this.value];
+                        return parent.COMMON_CODE['PMS_SALE_TYPE'].map[this.value];
                     }
                 },
                 {
@@ -192,14 +243,17 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
                     align: "center",
                     formatter: function() {
                         if (!this.value) return '';
-                        return parent.COMMON_CODE['ROOM_STATUS'].map[this.value];
+                        return parent.COMMON_CODE['PMS_STAY_STATUS'].map[this.value];
                     }
                 }
             ],
             body: {
                 onClick: function () {
                     this.self.select(this.dindex, {selectedClear: true});
-                }
+                },
+                onDBLClick: function () {
+                    ACTIONS.dispatch(ACTIONS.RSV_OPEN, this.item);
+                },
             }
         });
 

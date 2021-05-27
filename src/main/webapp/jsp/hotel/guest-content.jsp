@@ -18,9 +18,9 @@
         <script>
             var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}", email: "${email}", modalView: "${modalView}"};
         </script>
-        <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-content.js' />"></script>
         <ax:script-lang key="ax.script" var="LANG" />
         <ax:script-lang key="ax.base" var="COL" />
+        <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/guest-content.js' />"></script>
     </jsp:attribute>
     <jsp:body>
         <ax:split-panel width="*">
@@ -33,7 +33,7 @@
         </ax:split-panel>
             <ax:split-panel width="*" style="padding-top: 5px;">
                 <div data-fit-height-aside="form-view-01">
-                    <form name="form" class="js-form">
+                    <form name="form" class="js-form" onsubmit="return false;">
                         <div data-ax-tbl class="ax-form-tbl">
                             <input type="hidden" name="id" data-ax-path="id" class="form-control" readonly>
                             <div data-ax-tr>

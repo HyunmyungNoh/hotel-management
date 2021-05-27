@@ -23,6 +23,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         });
     },
     ITEM_CLICK: function (caller, act, data) {
+        caller.formView01.setData(data || {});
         //그리드에값을 바인딩 할수있으나 id를 통해서 조회후 바인딩하도록 프로세스 정의
         //fnObj.formView01.setData(this.item);
         /* var id = (data || {}).id;
@@ -31,17 +32,21 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             return false;
         }
         */
-        var id = (data || {}).id;
-        axboot.ajax({
-            type: 'GET',
-            url: '/api/v1/guest/' + id,
-            callback: function (res) {
-                caller.formView01.setData(res);
-                // caller.gridView02.clear();
-            },
-        });
+       // 사실 그리드에 원클릭, 더블클릭이 두 번 걸쳐 있는데 
+       // 원클릭 시 이미 ajax 통신을 태우기 때문에 그동안 block이 되버리고
+       // 그래서 더블클릭 이벤트를 호출하지 못함.
+        // var id = (data || {}).id;
+        // axboot.ajax({
+        //     type: 'GET',
+        //     url: '/api/v1/guest/' + id,
+        //     callback: function (res) {
+        //         caller.formView01.setData(res);
+        //         // caller.gridView02.clear();
+        //     },
+        // });
     },
     PAGE_CHOICE: function (caller, act, data) {
+        console.log(data)
         if (!data) {
             var list = caller.gridView01.getData('selected');
             if (list.length > 0) data = list[0];
@@ -93,7 +98,7 @@ fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
         axboot.buttonClick(this, 'data-page-btn', {
             choice: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_CHOICE);
+                ACTIONS.dispatch(ACTIONS.PAGE_CHOICE, this.item);
             },
             close: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_CLOSE);
@@ -146,9 +151,11 @@ fnObj.pageButtonView = axboot.viewExtend({
             ],
             body: {
                 onClick: function () {
-                    // grid.body.onClick.call({self: this, dIndex: 0, item: this.list[0]});
                     this.self.select(this.dindex, { selectedClear: true });
                     ACTIONS.dispatch(ACTIONS.ITEM_CLICK, this.item);
+                },
+                onDBLClick: function () {
+                    ACTIONS.dispatch(ACTIONS.PAGE_CHOICE, this.item);
                 },
             },
         });
