@@ -1,5 +1,14 @@
+var modalParams = modalParams || {};
 var fnObj = {};
 var ACTIONS = axboot.actionExtend(fnObj, {
+    PAGE_CLOSE: function (caller, act, data) {
+        /* if (parent) {
+            parent.axboot.modal.close(data);
+        } */
+        var modal = fnObj.getModal();
+        if (modal) modal.close();
+        if (opener) window.close();
+    },
     PAGE_SEARCH: function (caller, act, data) {
         if (data) {
             axboot.ajax({
@@ -8,6 +17,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 callback: function (res) {
                     caller.formView01.clear();
                     caller.formView01.setData(res);
+                    // caller.gridView01.setData(res.MemoList);
                 },
                 options: {
                     onerror: function (err) {
@@ -16,7 +26,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 }
             })
         }
-        return false;   // 이 부분을 왜 넣는지?
+        return false;
     },
     PAGE_SAVE: function (caller, act, data) {
         if (caller.formView01.validate()) {
@@ -89,13 +99,32 @@ var ACTIONS = axboot.actionExtend(fnObj, {
     },
 });
 
+// 모달창이 중첩될 때 처리
+fnObj.getModal = function() {
+    var modalView;
+    if (parent && modalParams.modalView && (modalView = parent[axboot.def.pageFunctionName][modalParams.modalView])) {
+        return modalView;
+    } else if (opener && modalParams.modalView && (modalView = opener[axboot.def.pageFunctionName][modalParams.modalView])) {
+        return modalView;
+    } else if (parent && parent.axboot && parent.axboot.modal) {
+        return parent.axboot.modal;
+    }
+}
+
 // fnObj 기본 함수 스타트와 리사이즈
 fnObj.pageStart = function () {
+    if (modalParams.id && modalParams.rsvNum) {
+        $('.js-rsvNum').text(modalParams.rsvNum);
+    } else {
+        axDialog.alert("예약번호는 필수입니다.", function () {
+            ACTIONS.dispatch(ACTIONS.PAGE_CLOSE);
+        });
+    }
     this.pageButtonView.initView();
     this.gridView01.initView();
     this.formView01.initView();
 
-    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+    if(modalParams.id) ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, modalParams.id);
 };
 
 fnObj.pageResize = function () {};
@@ -204,10 +233,10 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     },
     setData: function (data) {
         if (typeof data === 'undefined') data = this.getDefaultData();
-        data = $.extend({}, data);
-        if (data.rsvNum) {
-            $('.js-rsvNum').text('예약번호: ' + data.rsvNum);
-        }
+        data = $.extend({}, modalParams.rsvNum, data);
+/*         if (data.rsvNum) {
+            $('.js-rsvNum').text(data.rsvNum);
+        } */
 
         this.model.setModel(data);
         this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경

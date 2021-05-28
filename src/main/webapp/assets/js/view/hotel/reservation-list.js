@@ -36,7 +36,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         if(!data) data = {};
         axboot.modal.open({
             width: 1000,
-            height: 700,
+            height: 620,
             iframe: {
                 param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
                 url: "reservation-content.jsp"
@@ -190,6 +190,9 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
         var _this = this;
 
         this.target = axboot.gridBuilder({
+            onPageChange: function (pageNumber) {
+                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, { pageNumber: pageNumber });
+            },
             showRowSelector: true,
             frozenColumnIndex: 0,
             multipleSelect: true,
