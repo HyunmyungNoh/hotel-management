@@ -39,6 +39,8 @@ public class RsvSaveRequestDto {
     private String gender;
     private String rmk;
 
+    private String sttusCd;
+
     // 화면에서 받아온 메모는 이 dto를 통해 들어감
     private List<MemoSaveRequestDto> memos = new ArrayList<MemoSaveRequestDto>();
 
@@ -48,7 +50,7 @@ public class RsvSaveRequestDto {
                              String roomTypCd, Integer adultCnt, Integer chldCnt,
                              String saleTypCd, String srcCd, String payCd, String advnYn, BigDecimal salePrc, BigDecimal svcPrc,
                              Long guestId, String guestNm, String guestNmEng, String guestTel, String email, String langCd, String brth, String gender, String rmk,
-                             List<MemoSaveRequestDto> memos) {
+                             String sttusCd, List<MemoSaveRequestDto> memos) {
         this.id = id;
         this.arrDt = arrDt;
         this.depDt = depDt;
@@ -71,6 +73,7 @@ public class RsvSaveRequestDto {
         this.brth = brth;
         this.gender = gender;
         this.rmk = rmk;
+        this.sttusCd = sttusCd;
         this.memos = memos;
     }
 
@@ -101,6 +104,7 @@ public class RsvSaveRequestDto {
                 .langCd(langCd)
                 .brth(brth)
                 .gender(gender)
+                .sttusCd(sttusCd)
                 .build();
     }
 }

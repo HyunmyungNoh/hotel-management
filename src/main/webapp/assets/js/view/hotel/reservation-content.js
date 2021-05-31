@@ -15,9 +15,8 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 type: 'GET',
                 url: '/api/v1/reservation/' + data,
                 callback: function (res) {
-                    caller.formView01.clear();
                     caller.formView01.setData(res);
-                    // caller.gridView01.setData(res.MemoList);
+                    caller.gridView01.setData(res.memos || []);
                 },
                 options: {
                     onerror: function (err) {
@@ -43,33 +42,21 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 url: '/api/v1/reservation',
                 data: JSON.stringify(item),
                 callback: function (res) {
+                    axDialog.alert('저장 되었습니다', function () {
+                        if (parent && parent.axboot && parent.axboot.modal) {
+                            parent.axboot.modal.callback({ dirty: true });
+                        }
+                    });
                     // axToast.push('저장 되었습니다');
-                    ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, res.map.rsvNum);  // 나중에 promise로 리팩토링
-                    axToast.push(res.map.message);
-                    
-					// caller.formView01.clear();
-                    // caller.gridView01.clear();
-                },
+                    // ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, res.map.rsvNum);  // 나중에 promise로 리팩토링
+                    // axToast.push(res.map.message);
+                }
             });
         }
     },
     FIND_GUEST: function (caller, act, data) {
         var data = caller.formView01.model.get()||{};
-
-        axboot.modal.open({
-            width: 780,
-            height: 550,
-            iframe: {
-                param: 'guestNm=' + (data.guestNm||'') + '&guestTel=' + (data.guestTel||'')
-                        + '&email=' + (data.email||''),
-                url: "guest-content.jsp"
-            },
-            header: { title: '투숙객 목록' },
-            callback: function (data) {
-                caller.formView01.setGuest(data);
-                this.close();
-            }
-        });
+        caller.guestContentView.open(data);
     },
     FORM_CLEAR: function (caller, act, data) {
         axDialog.confirm({ msg: LANG('ax.script.form.clearconfirm') }, function () {
@@ -123,6 +110,7 @@ fnObj.pageStart = function () {
     this.pageButtonView.initView();
     this.gridView01.initView();
     this.formView01.initView();
+    this.guestContentView.initView();
 
     if(modalParams.id) ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, modalParams.id);
 };
@@ -234,9 +222,6 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
     setData: function (data) {
         if (typeof data === 'undefined') data = this.getDefaultData();
         data = $.extend({}, modalParams.rsvNum, data);
-/*         if (data.rsvNum) {
-            $('.js-rsvNum').text(data.rsvNum);
-        } */
 
         this.model.setModel(data);
         this.modelFormatter.formatting(); // 입력된 값을 포메팅 된 값으로 변경
@@ -291,10 +276,11 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
             var resArrDt = moment(arrDt);
             var resDepDt = moment(depDt);
-            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            var nightCnt = resDepDt.diff(resArrDt, 'days');
+            
             if (nightCnt < 1) {
                 nightCnt = 1;
-                _this.model.set('depDt', resArrDt.add(nigntCnt, 'days').format('yyyy-MM-DD'));
+                _this.model.set('depDt', resArrDt.add(nightCnt, 'days').format('yyyy-MM-DD'));
             }
             _this.model.set('nightCnt', nightCnt);
         });
@@ -306,10 +292,10 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
             var resArrDt = moment(arrDt);
             var resDepDt = moment(depDt);
-            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            var nightCnt = resDepDt.diff(resArrDt, 'days');
             if (nightCnt < 1) {
                 nightCnt = 1;
-                _this.model.set('depDt', resArrDt.add(-nigntCnt, 'days').format('yyyy-MM-DD'));
+                _this.model.set('depDt', resArrDt.add(-nightCnt, 'days').format('yyyy-MM-DD'));
             }
             _this.model.set('nightCnt', nightCnt);
         });
@@ -349,4 +335,41 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
         this.InitEvent();
     },
+});
+
+/**
+ * 투숙객 모달 창
+ */
+fnObj.guestContentView = axboot.viewExtend({
+    open: function(data) {
+        // var _this = this;
+        if(!data) data = {};
+
+        this.modal.open({
+            width: 780,
+            height: 550,
+            iframe: {
+                param: 'guestNm=' + (data.guestNm||'') + '&guestTel=' + (data.guestTel||'')
+                        + '&email=' + (data.email||'') +  '&modalView=guestContentView',
+                url: "guest-content.jsp"
+            },
+            header: { title: '투숙객 목록' },
+            /* 콜백 부분은 아래에서 따로 분리하여 만든다
+            callback: function (data) {
+                caller.formView01.setGuest(data);
+                this.close();
+            } */
+        });
+    },
+    close: function () {
+        this.modal.close();
+    },
+    callback: function (data) {
+        fnObj.formView01.setGuest(data);
+        this.modal.close();
+    },
+    initView: function () {
+        // 새로운 인스턴스 생성
+        this.modal = new ax5.ui.modal();
+    }
 });

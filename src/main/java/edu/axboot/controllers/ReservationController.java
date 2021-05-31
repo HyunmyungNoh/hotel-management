@@ -4,10 +4,14 @@ import com.chequer.axboot.core.api.response.ApiResponse;
 import com.chequer.axboot.core.api.response.Responses;
 import com.chequer.axboot.core.controllers.BaseController;
 import com.chequer.axboot.core.parameter.RequestParams;
+import com.chequer.axboot.core.utils.DateUtils;
+import com.chequer.axboot.core.utils.ExcelUtils;
 import com.chequer.axboot.core.utils.MessageUtils;
+import com.wordnik.swagger.annotations.ApiOperation;
 import edu.axboot.controllers.reservedto.RsvListResponseDto;
 import edu.axboot.controllers.reservedto.RsvResponseDto;
 import edu.axboot.controllers.reservedto.RsvSaveRequestDto;
+import edu.axboot.controllers.reservedto.RsvStatusRequestDto;
 import edu.axboot.domain.hotel.reservation.Reservation;
 import edu.axboot.domain.hotel.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,8 @@ import org.aspectj.bridge.MessageUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,10 +60,30 @@ public class ReservationController extends BaseController {
         List<RsvListResponseDto> list = reservationService.findBy(filter, rsvNum, roomTypCd, rsvSttDate, rsvEndDate, arrSttDate, arrEndDate, depSttDate, depEndDate, sttusCds);
         return Responses.ListResponse.of(list);
     }
-/*    @PostMapping("/api/v1/reservation/save")
-    public ApiResponse reserveSave(@RequestBody ReserveSaveRequestDto requestDto) {
-        reservationService.reserveSave(requestDto);
+
+    // 상태 일괄 변경
+    @PutMapping("/api/v1/reservation")
+    public ApiResponse updateByStatus(@RequestBody List<RsvStatusRequestDto> requestDto) {
+        reservationService.updateByStatus(requestDto);
         return ok();
-    }*/
+    }
+
+    @ApiOperation(value = "엑셀다운로드", notes = "/resources/excel/pms_guest.xlsx")
+    @PostMapping("/api/v1/reservation/exceldown")
+//    @RequestMapping(value = "/exceldown", method = {RequestMethod.POST}, produces = APPLICATION_JSON)
+    public void excelDown(@RequestParam(value = "filter", required = false) String filter,
+                          @RequestParam(value = "rsvNum", required = false) String rsvNum,
+                          @RequestParam(value = "roomTypCd", required = false) String roomTypCd,
+                          @RequestParam(value = "rsvDtStart", required = false) String rsvSttDate,
+                          @RequestParam(value = "rsvDtEnd", required = false) String rsvEndDate,
+                          @RequestParam(value = "arrDtStart", required = false) String arrSttDate,
+                          @RequestParam(value = "arrDtEnd", required = false) String arrEndDate,
+                          @RequestParam(value = "depDtStart", required = false) String depSttDate,
+                          @RequestParam(value = "depDtEnd", required = false) String depEndDate,
+                          @RequestParam(value = "sttusCd", required = false) List<String> sttusCds,
+                          HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<RsvListResponseDto> list = reservationService.findBy(filter, rsvNum, roomTypCd, rsvSttDate, rsvEndDate, arrSttDate, arrEndDate, depSttDate, depEndDate, sttusCds);
+        ExcelUtils.renderExcel("/excel/pms_reservation.xlsx", list, "PMS_Reservation_" + DateUtils.getYyyyMMddHHmmssWithDate(), request, response);
+    }
 
 }

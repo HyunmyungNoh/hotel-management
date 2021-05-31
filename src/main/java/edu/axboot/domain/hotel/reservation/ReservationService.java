@@ -3,10 +3,7 @@ package edu.axboot.domain.hotel.reservation;
 import com.chequer.axboot.core.api.response.Responses;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import edu.axboot.controllers.reservedto.MemoSaveRequestDto;
-import edu.axboot.controllers.reservedto.RsvListResponseDto;
-import edu.axboot.controllers.reservedto.RsvResponseDto;
-import edu.axboot.controllers.reservedto.RsvSaveRequestDto;
+import edu.axboot.controllers.reservedto.*;
 import edu.axboot.domain.hotel.guest.Guest;
 import edu.axboot.domain.hotel.guest.GuestRepository;
 import edu.axboot.domain.hotel.reservation.memo.Memo;
@@ -114,17 +111,17 @@ public class ReservationService extends BaseService<Reservation, Long> {
             // 이것이 바로 jpa 영속성 으로 보임
             reservation.예약수정(guestId, saveDto.getGuestNm(), saveDto.getGuestNmEng(), saveDto.getGuestTel(), saveDto.getEmail(), saveDto.getBrth(), saveDto.getGender(), saveDto.getLangCd(),
                     saveDto.getArrDt(), saveDto.getDepDt(), saveDto.getNightCnt(), saveDto.getRoomTypCd(), saveDto.getAdultCnt(), saveDto.getChldCnt(),
-                    saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc());
+                    saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc(), saveDto.getSttusCd());
+
             id = saveDto.getId();
         }
 
         /*
-        * 투숙 메모 처리
+        * ③ 투숙 메모 처리
         * 메모 테이블에 필요한 예약번호와 Dto 화면에서 받아온 메모 리스트를 가져온다.
         */
         List<MemoSaveRequestDto> memoDtos = saveDto.getMemos();
         this.saveToMemo(reservation.getRsvNum(), saveDto.getMemos());
-//        this.saveToMemo(reservation.getRsvNum(), saveDto.getMemos());
 
         return id;
     }
@@ -193,6 +190,7 @@ public class ReservationService extends BaseService<Reservation, Long> {
     }
 
     // id 로 해당 숙박 정보 다 불러옴
+    @Transactional(readOnly = true)
     public RsvResponseDto findById(Long id) {
         Reservation reservation = reservationRepository.findOne(id);
         if(reservation == null) throw new IllegalArgumentException("해당 예약 정보가 없습니다. id=" + id);
@@ -201,6 +199,7 @@ public class ReservationService extends BaseService<Reservation, Long> {
 
     // 검색어가 주어질 시 숙박 리스트 가져옴
     // filter에는 투숙객명, 전화번호, 이메일
+    @Transactional(readOnly = true)
     public List<RsvListResponseDto> findBy(String filter, String rsvNum, String roomTypCd,
                                            String rsvSttDate, String rsvEndDate, String arrSttDate, String arrEndDate, String depSttDate, String depEndDate,
                                            List<String> sttusCds) {
@@ -249,9 +248,9 @@ public class ReservationService extends BaseService<Reservation, Long> {
 
         List<Reservation> entities = select().select(
                 Projections.fields(Reservation.class,
-                        qReservation.id, qReservation.rsvNum, qReservation.rsvDt, qReservation.arrDt, qReservation.depDt, /*qReservation.nightCnt,*/
+                        qReservation.id, qReservation.rsvNum, qReservation.rsvDt, qReservation.arrDt, qReservation.depDt, qReservation.nightCnt,
                         qReservation.roomTypCd, qReservation.roomNum, qReservation.saleTypCd, qReservation.srcCd, qReservation.sttusCd,
-                        /*qReservation.salePrc, */qReservation.guestNm))
+                        qReservation.salePrc, qReservation.guestNm))
                 .from(qReservation)
                 .where(builder)
                 .orderBy(qReservation.rsvNum.asc())
@@ -260,5 +259,13 @@ public class ReservationService extends BaseService<Reservation, Long> {
         return entities.stream()
                 .map(RsvListResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateByStatus(List<RsvStatusRequestDto> requestDto) {
+        for (RsvStatusRequestDto dto: requestDto) {
+            Reservation reservation = reservationRepository.findOne(dto.getId());
+            reservation.예약상태변경(dto.getSttusCd());
+        }
     }
 }

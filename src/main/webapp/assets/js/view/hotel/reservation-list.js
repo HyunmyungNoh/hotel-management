@@ -18,20 +18,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         });
         return false;
     },
-    PAGE_SAVE: function (caller, act, data) {
-        var saveList = [].concat(caller.gridView01.getData("modified"));
-        saveList = saveList.concat(caller.gridView01.getData("deleted"));
-
-        axboot.ajax({
-            type: "PUT",
-            url: ["samples", "parent"],
-            data: JSON.stringify(saveList),
-            callback: function (res) {
-                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-                axToast.push("저장 되었습니다");
-            }
-        });
-    },
     RSV_OPEN: function (caller, act, data) {
         if(!data) data = {};
         axboot.modal.open({
@@ -51,6 +37,39 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         });
     },
     ITEM_CLICK: function (caller, act, data) {
+    },
+    STTUS_CHANGE: function (caller, act, data) {
+        axDialog.confirm({msg: '선택한 항목의 상태를 변경하시겠습니까?'}, function () {
+            if (this.key == 'ok') {
+                var sttusCd = caller.gridView01.getSttusCd();
+                if (!sttusCd) return;
+                var saveList = [].concat(caller.gridView01.getData("selected"));
+                if (!saveList.length) {
+                    axToast.push("선택한 항목이 없습니다.");
+                    return false;
+                }
+
+                saveList.forEach(function (item) {
+                    item.sttusCd = sttusCd;
+                });
+
+                axboot.ajax({
+                    type: 'PUT',
+                    url: '/api/v1/reservation',
+                    data: JSON.stringify(saveList),
+                    callback: function (res) {
+                        ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
+                        axToast.push("변경되었습니다");
+                    }
+                });
+            }
+        });
+    },
+    EXCEL_DOWN: function (caller, act, data) {
+        var frm = $('.js-form').get(0);
+        frm.action = '/api/v1/reservation/exceldown';
+        frm.enctype = 'application/x-www-form-urlencoded';
+        frm.submit();
     },
     ITEM_ADD: function (caller, act, data) {
         caller.gridView01.addRow();
@@ -91,11 +110,8 @@ fnObj.pageButtonView = axboot.viewExtend({
                 fnObj.searchView.clear();
             },
             excel: function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-            },
-            /*             "save": function () {
-                ACTIONS.dispatch(ACTIONS.PAGE_SAVE);
-            }, */
+                ACTIONS.dispatch(ACTIONS.EXCEL_DOWN);
+            }
         });
     }
 });
@@ -186,6 +202,9 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
  * gridView
  */
 fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
+    getSttusCd: function () {
+        return this.sttusCd.val();
+    },
     initView: function () {
         var _this = this;
 
@@ -205,20 +224,20 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
                     width: 100,
                     align: "center"
                 },
-                {key: "guestNm", label: "투숙객", width: 100, align: "center", editor: "text"},
+                {key: "guestNm", label: "투숙객", width: 100, align: "center"},
                 {
                     key: "roomTypCd",
                     label: "객실타입",
-                    width: 100, 
+                    width: 130, 
                     align: "center", 
                     formatter: function() {
                         if (!this.value) return '';
                         return parent.COMMON_CODE['ROOM_TYPE'].map[this.value];
                     }
                 },
-                {key: "roomNum", label: "객실번호", width: 100, align: "center", editor: "text"},
-                {key: "arrDt", label: "도착일", width: 100, align: "center", editor: "text"},
-                {key: "depDt", label: "출발일", width: 100, align: "center", editor: "text"},
+                {key: "roomNum", label: "객실번호", width: 100, align: "center"},
+                {key: "arrDt", label: "도착일", width: 100, align: "center"},
+                {key: "depDt", label: "출발일", width: 100, align: "center"},
                 {
                     key: "srcCd",
                     label: "예약경로",
@@ -260,12 +279,10 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
             }
         });
 
+        this.sttusCd = $('.js-sttusCd');
         axboot.buttonClick(this, "data-grid-view-01-btn", {
-            "add": function () {
-                ACTIONS.dispatch(ACTIONS.ITEM_ADD);
-            },
-            "delete": function () {
-                ACTIONS.dispatch(ACTIONS.ITEM_DEL);
+            change: function () {
+                ACTIONS.dispatch(ACTIONS.STTUS_CHANGE);
             }
         });
     },

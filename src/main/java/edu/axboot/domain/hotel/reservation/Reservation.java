@@ -201,7 +201,7 @@ public class Reservation extends BaseJpaModel<Long> {
 	// 화면 단에서 수정된 내용들 받음
 	public void 예약수정(Long guestId, String guestNm, String guestNmEng, String guestTel, String email, String brth, String gender, String langCd,
 					 String arrDt, String depDt, Integer nightCnt, String roomTypCd, Integer adultCnt, Integer chldCnt,
-					 String saleTypCd, String srcCd, String payCd, String advnYn, BigDecimal salePrc, BigDecimal svcPrc) {
+					 String saleTypCd, String srcCd, String payCd, String advnYn, BigDecimal salePrc, BigDecimal svcPrc, String sttusCd) {
 		this.guestId = guestId;
 		this.guestNm = guestNm;
 		this.guestNmEng = guestNmEng;
@@ -222,5 +222,11 @@ public class Reservation extends BaseJpaModel<Long> {
 		this.advnYn = advnYn;
 		this.salePrc = salePrc;
 		this.svcPrc = svcPrc;
+		this.sttusCd = sttusCd;
+	}
+
+	// 상태 변경
+	public void 예약상태변경(String sttusCd) {
+		this.sttusCd = sttusCd;
 	}
 }

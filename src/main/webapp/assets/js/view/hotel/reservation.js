@@ -67,7 +67,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                 caller.gridView01.clear();
                 caller.formView01.clear();
                 $('.js-rsvNum').empty();
-                console.log('지워졌습니다');
                 $('[data-ax-path="arrDt"]').focus();
             }
         });
@@ -262,10 +261,10 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
             var resArrDt = moment(arrDt);
             var resDepDt = moment(depDt);
-            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            var nightCnt = resDepDt.diff(resArrDt, 'days');
             if (nightCnt < 1) {
                 nightCnt = 1;
-                _this.model.set('depDt', resArrDt.add(nigntCnt, 'days').format('yyyy-MM-DD'));
+                _this.model.set('depDt', resArrDt.add(nightCnt, 'days').format('yyyy-MM-DD'));
             }
             _this.model.set('nightCnt', nightCnt);
         });
@@ -277,10 +276,10 @@ fnObj.formView01 = axboot.viewExtend(axboot.formView, {
 
             var resArrDt = moment(arrDt);
             var resDepDt = moment(depDt);
-            var nigntCnt = resDepDt.diff(resArrDt, 'days');
+            var nightCnt = resDepDt.diff(resArrDt, 'days');
             if (nightCnt < 1) {
                 nightCnt = 1;
-                _this.model.set('depDt', resArrDt.add(-nigntCnt, 'days').format('yyyy-MM-DD'));
+                _this.model.set('depDt', resArrDt.add(-nightCnt, 'days').format('yyyy-MM-DD'));
             }
             _this.model.set('nightCnt', nightCnt);
         });

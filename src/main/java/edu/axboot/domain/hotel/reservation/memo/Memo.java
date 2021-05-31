@@ -9,7 +9,8 @@ import com.chequer.axboot.core.annotations.Comment;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-
+@DynamicUpdate
+@DynamicInsert
 @Getter
 @NoArgsConstructor
 @Entity

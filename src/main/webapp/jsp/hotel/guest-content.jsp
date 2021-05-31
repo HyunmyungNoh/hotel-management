@@ -16,7 +16,8 @@
 <ax:layout name="modal">
     <jsp:attribute name="script">
         <script>
-            var modalParams = {guestNm: "${guestNm}", guestTel: "${guestTel}", email: "${email}", modalView: "${modalView}"};
+            var tel = "${guestTel}".replace(/\-/g,"");
+            var modalParams = {guestNm: "${guestNm}", guestTel: tel, email: "${email}", modalView: "${modalView}"};
         </script>
         <ax:script-lang key="ax.script" var="LANG" />
         <ax:script-lang key="ax.base" var="COL" />

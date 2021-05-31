@@ -46,7 +46,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         // });
     },
     PAGE_CHOICE: function (caller, act, data) {
-        console.log(data)
         if (!data) {
             var list = caller.gridView01.getData('selected');
             if (list.length > 0) data = list[0];

@@ -3,6 +3,7 @@ package edu.axboot.controllers.reservedto;
 import edu.axboot.domain.hotel.reservation.Reservation;
 import edu.axboot.domain.hotel.reservation.memo.Memo;
 import lombok.Getter;
+import org.h2.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class RsvResponseDto {
     private String brth;
     private String gender;
 
+    private String sttusCd;
+
     private List<MemoResponseDto> memos = new ArrayList<MemoResponseDto>();
 
     public RsvResponseDto(Reservation entity) {
@@ -64,8 +67,10 @@ public class RsvResponseDto {
         this.brth = entity.getBrth();
         this.gender = entity.getGender();
 
+        this.sttusCd = entity.getSttusCd();
+
         for (Memo memo: entity.getMemos()) {
-            this.memos.add(new MemoResponseDto(memo));
+            if (memo.getDelYn().equals("N")) this.memos.add(new MemoResponseDto(memo));
         }
     }
 }

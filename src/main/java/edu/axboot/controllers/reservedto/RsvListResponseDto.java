@@ -30,13 +30,13 @@ public class RsvListResponseDto {
         this.rsvDt = entity.getRsvDt();
         this.arrDt = entity.getArrDt();
         this.depDt = entity.getDepDt();
-//        this.nightCnt = entity.getNightCnt;
+        this.nightCnt = entity.getNightCnt();
         this.roomTypCd = entity.getRoomTypCd();
         this.roomNum = entity.getRoomNum();
         this.saleTypCd = entity.getSaleTypCd();
         this.srcCd = entity.getSrcCd();
         this.sttusCd = entity.getSttusCd();
-//        this.salePrc = salePrc;
+        this.salePrc = entity.getSalePrc();
         this.guestNm = entity.getGuestNm();
     }
 }
