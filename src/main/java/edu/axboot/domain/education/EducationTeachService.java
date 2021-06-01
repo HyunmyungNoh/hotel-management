@@ -37,7 +37,7 @@ public class EducationTeachService extends BaseService<EducationTeach, Long> {
 
     private EducationTeachRepository educationTeachRepository;
 
-    @Inject
+    /*@Inject*/
     private EducationTeachMapper educationTeachMapper;
 
     @Inject
@@ -181,6 +181,8 @@ public class EducationTeachService extends BaseService<EducationTeach, Long> {
 
     // ---------------------------------------------------------------------------
     // [ region : MyBatis 사용하는 셈플 ]
+/*
+
     public Page<EducationTeach> getPageUsingMyBatis(RequestParams<EducationTeach> requestParams) {
         String companyNm = requestParams.getString("companyNm", "");
         String ceo = requestParams.getString("ceo", "");
@@ -291,5 +293,6 @@ public class EducationTeachService extends BaseService<EducationTeach, Long> {
 
         return resultMsg;
     }
+*/
 
 }

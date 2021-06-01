@@ -216,23 +216,44 @@ public class ReservationService extends BaseService<Reservation, Long> {
         if (isNotEmpty(rsvNum)) builder.and(qReservation.rsvNum.contains(rsvNum));
         // 객실 타입
         if (isNotEmpty(roomTypCd)) builder.and(qReservation.roomTypCd.eq(roomTypCd));
-        // 예약일
+
+        //  예약일 - 시작일 기준
         if (isNotEmpty(rsvSttDate)) {
             if (isNotEmpty(rsvEndDate)) {
                 builder.and(qReservation.rsvDt.between(rsvSttDate, rsvEndDate));
             } else builder.and(qReservation.rsvDt.goe(rsvSttDate));
         }
-        // 도착일
+        // 예약일 - 끝일 기준
+        if (isNotEmpty(rsvEndDate)) {
+            if (isNotEmpty(rsvSttDate)) {
+                builder.and(qReservation.rsvDt.between(rsvSttDate, rsvEndDate));
+            } else builder.and(qReservation.rsvDt.loe(rsvEndDate));
+        }
+
+        // 도착일 - 시작일 기준
         if (isNotEmpty(arrSttDate)) {
             if (isNotEmpty(arrEndDate)) {
                 builder.and(qReservation.arrDt.between(arrSttDate, arrEndDate));
             } else builder.and(qReservation.arrDt.goe(arrSttDate));
         }
-        // 출발일
+        // 도착일 - 끝일 기준
+        if (isNotEmpty(arrEndDate)) {
+            if (isNotEmpty(arrSttDate)) {
+                builder.and(qReservation.arrDt.between(arrSttDate, arrEndDate));
+            } else builder.and(qReservation.arrDt.loe(arrEndDate));
+        }
+
+        // 출발일 - 시작일 기준
         if (isNotEmpty(depSttDate)) {
             if (isNotEmpty(depEndDate)) {
-                builder.and(qReservation.depDt.between(depSttDate, rsvEndDate));
+                builder.and(qReservation.depDt.between(depSttDate, depEndDate));
             } else builder.and(qReservation.depDt.goe(depSttDate));
+        }
+        // 출발일 - 끝일 기준
+        if (isNotEmpty(depEndDate)) {
+            if (isNotEmpty(depSttDate)) {
+                builder.and(qReservation.depDt.between(depSttDate, depEndDate));
+            } else builder.and(qReservation.depDt.loe(depEndDate));
         }
 
         // 예약 상태
@@ -261,6 +282,7 @@ public class ReservationService extends BaseService<Reservation, Long> {
                 .collect(Collectors.toList());
     }
 
+    // 예약 상태 일괄 변경
     @Transactional
     public void updateByStatus(List<RsvStatusRequestDto> requestDto) {
         for (RsvStatusRequestDto dto: requestDto) {

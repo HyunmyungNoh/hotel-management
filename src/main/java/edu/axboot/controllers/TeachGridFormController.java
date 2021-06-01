@@ -54,6 +54,7 @@ public class TeachGridFormController extends BaseController {
 
     // ---------------------------------------------------------------------------
     // [ region : MyBatis 사용하는 셈플 ]
+    /*
     @RequestMapping(value = "/mybatis", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public Responses.PageResponse listUsingMyBatis(RequestParams<EducationTeach> requestParams) {
         Page<EducationTeach> page = educationTeachService.getPageUsingMyBatis(requestParams);
@@ -77,5 +78,6 @@ public class TeachGridFormController extends BaseController {
         educationTeachService.deleteUsingMybatis(ids);
         return ok();
     }
+    */
     // [ endregion : MyBatis 사용하는 셈플 ] ---------------------------------------
 }

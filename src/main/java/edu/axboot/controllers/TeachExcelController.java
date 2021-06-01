@@ -51,6 +51,8 @@ public class TeachExcelController extends BaseController {
      * @param : fileId
      * @return : ApiStatus.SUCCESS
      */
+/*
+
     @ApiOperation(value = "엑셀업로드", notes = "/resources/excel/education_upload.xml")
     @RequestMapping(value = "/excelupload", method = {RequestMethod.POST}, produces = APPLICATION_JSON)
     public ApiResponse excel(HttpServletRequest request) throws Exception{
@@ -62,5 +64,6 @@ public class TeachExcelController extends BaseController {
 
         return ok();
     }
+*/
 
 }
