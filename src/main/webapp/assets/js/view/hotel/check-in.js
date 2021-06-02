@@ -39,9 +39,9 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             height: 620,
             iframe: {
                 param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
-                url: "reservation-content.jsp"
+                url: "check-in-content.jsp"
             },
-            header: {title: "예약 조회"},
+            header: {title: "체크 인"},
             callback: function (data) {
                 if (data && data.dirty) {
                     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);

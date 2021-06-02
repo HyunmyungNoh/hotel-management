@@ -88,13 +88,13 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
     initView: function () {
         this.target = $(document["searchView0"]);
         this.target.attr("onsubmit", "return ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);");
-        this.roomType = $(".js-roomType");
+        this.roomTypCd = $(".js-roomTypCd");
     },
     getData: function () {
         return {
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
-            roomType: this.roomType.val()
+            roomTypCd: this.roomTypCd.val()
         }
     }
 });

@@ -45,8 +45,8 @@ public class RoomController extends BaseController {
     }*/
 
     @GetMapping("/api/v1/hotel/roomInfo")
-    public Responses.ListResponse getRoomList(@RequestParam(value = "roomType", required = false) String roomType) {
-        List<Room> list = roomService.getRoomList(roomType);
+    public Responses.ListResponse getRoomList(@RequestParam(value = "roomTypCd", required = false) String roomTypCd) {
+        List<Room> list = roomService.getRoomList(roomTypCd);
         return Responses.ListResponse.of(list);
     }
 
@@ -54,7 +54,6 @@ public class RoomController extends BaseController {
     @PostMapping("/api/v1/hotel/roomInfo")
     public ApiResponse saveRoom(@RequestBody List<Room> request) {
         roomService.save(request);
-//        roowmService.saveRoom(request);
         return ok();
     }
 
