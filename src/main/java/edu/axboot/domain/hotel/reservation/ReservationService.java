@@ -111,7 +111,7 @@ public class ReservationService extends BaseService<Reservation, Long> {
             // 이것이 바로 jpa 영속성 으로 보임
             reservation.예약수정(guestId, saveDto.getGuestNm(), saveDto.getGuestNmEng(), saveDto.getGuestTel(), saveDto.getEmail(), saveDto.getBrth(), saveDto.getGender(), saveDto.getLangCd(),
                     saveDto.getArrDt(), saveDto.getDepDt(), saveDto.getNightCnt(), saveDto.getRoomTypCd(), saveDto.getAdultCnt(), saveDto.getChldCnt(),
-                    saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc(), saveDto.getSttusCd());
+                    saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc(), saveDto.getSttusCd(), saveDto.getRoomNum());
 
             id = saveDto.getId();
         }
@@ -289,5 +289,45 @@ public class ReservationService extends BaseService<Reservation, Long> {
             Reservation reservation = reservationRepository.findOne(dto.getId());
             reservation.예약상태변경(dto.getSttusCd());
         }
+    }
+
+    // check-In
+    @Transactional
+    public long checkIn(RsvSaveRequestDto saveDto) {
+
+        long id = 0;
+        // guest 인스턴스를 만들어 화면에서 받아온 id 등의 항목을 put
+        Guest guest = Guest.builder()
+                .id(saveDto.getGuestId())
+                .guestNm(saveDto.getGuestNm())
+                .guestNmEng(saveDto.getGuestNmEng())
+                .guestTel(saveDto.getGuestTel())
+                .email(saveDto.getEmail())
+                .brth(saveDto.getBrth())
+                .gender(saveDto.getGender())
+                .langCd(saveDto.getLangCd())
+                .rmk(saveDto.getRmk())
+                .build();
+
+        // guest 리포지토리를 통해 투숙객 테이블에 저장. id가 없다면 insert, 있다면 update가 될 것
+        // guestId 변수에는 이 투숙객의 최종 id가 들어갈 것임
+        Long guestId = guestRepository.save(guest).getId();
+
+        Reservation reservation = reservationRepository.findOne(saveDto.getId()); // 그 id를 가진 놈을 찾아냄
+        reservation.투숙객id갱신(guestId);   // 어쨌든 투숙객 id 넣고
+        // 아래부터는 왜 repository save를 호출하지 않는지? 위에서 놈을 찾아서 바로 값 집어넣음
+        // 이것이 바로 jpa 영속성 으로 보임
+        reservation.예약수정(guestId, saveDto.getGuestNm(), saveDto.getGuestNmEng(), saveDto.getGuestTel(), saveDto.getEmail(), saveDto.getBrth(), saveDto.getGender(), saveDto.getLangCd(),
+                saveDto.getArrDt(), saveDto.getDepDt(), saveDto.getNightCnt(), saveDto.getRoomTypCd(), saveDto.getAdultCnt(), saveDto.getChldCnt(),
+                saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc(), saveDto.getSttusCd(), saveDto.getRoomNum());
+
+        reservation.예약상태변경("CHK_01");
+
+        id = saveDto.getId();
+
+        List<MemoSaveRequestDto> memoDtos = saveDto.getMemos();
+        this.saveToMemo(reservation.getRsvNum(), saveDto.getMemos());
+
+        return id;
     }
 }

@@ -39,7 +39,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             // if (!item.id) item.__created__ = true;
             axboot.ajax({
                 type: 'POST',
-                url: '/api/v1/reservation',
+                url: '/api/v1/reservation/checkIn',
                 data: JSON.stringify(item),
                 callback: function (res) {
                     axDialog.alert('저장 되었습니다', function () {
@@ -47,9 +47,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
                             parent.axboot.modal.callback({ dirty: true });
                         }
                     });
-                    // axToast.push('저장 되었습니다');
-                    // ACTIONS.dispatch(ACTIONS.PAGE_SEARCH, res.map.rsvNum);  // 나중에 promise로 리팩토링
-                    // axToast.push(res.map.message);
                 }
             });
         }

@@ -40,6 +40,7 @@ public class RsvResponseDto {
     private String gender;
 
     private String sttusCd;
+    private String roomNum;
 
     private List<MemoResponseDto> memos = new ArrayList<MemoResponseDto>();
 
@@ -68,6 +69,7 @@ public class RsvResponseDto {
         this.gender = entity.getGender();
 
         this.sttusCd = entity.getSttusCd();
+        this.roomNum = entity.getRoomNum();
 
         for (Memo memo: entity.getMemos()) {
             if (memo.getDelYn().equals("N")) this.memos.add(new MemoResponseDto(memo));
