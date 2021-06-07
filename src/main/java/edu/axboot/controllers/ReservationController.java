@@ -72,7 +72,27 @@ public class ReservationController extends BaseController {
     @PostMapping("/api/v1/reservation/checkIn")
     // 원래는 ApiResponse로 성공 여부만 보냈지만 이번엔 특정 메시지를 실어보내기로 한다.
     public Responses.MapResponse checkIn(@RequestBody RsvSaveRequestDto requestDto, HttpServletRequest request) {
-        Long id = reservationService.checkIn(requestDto);
+        Long id = reservationService.check(requestDto, 1);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("rsvNum", id);   // 예약 ID와 메시지를 map에 실어 보낸다.
+        map.put("message", MessageUtils.getMessage(request, "ax.script.onsave"));
+        return Responses.MapResponse.of(map);
+    }
+
+    // Check-Out
+    @PostMapping("/api/v1/reservation/checkOut")
+    public Responses.MapResponse checkOut(@RequestBody RsvSaveRequestDto requestDto, HttpServletRequest request) {
+        Long id = reservationService.check(requestDto, 2);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("rsvNum", id);   // 예약 ID와 메시지를 map에 실어 보낸다.
+        map.put("message", MessageUtils.getMessage(request, "ax.script.onsave"));
+        return Responses.MapResponse.of(map);
+    }
+
+    // Check-Cancel
+    @PostMapping("/api/v1/reservation/checkCancel")
+    public Responses.MapResponse checkCancel(@RequestBody RsvSaveRequestDto requestDto, HttpServletRequest request) {
+        Long id = reservationService.check(requestDto, 3);
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("rsvNum", id);   // 예약 ID와 메시지를 map에 실어 보낸다.
         map.put("message", MessageUtils.getMessage(request, "ax.script.onsave"));

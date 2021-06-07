@@ -10,7 +10,7 @@
     <jsp:attribute name="script">
         <ax:script-lang key="ax.script" var="LANG"/>
         <ax:script-lang key="ax.base" var="COL"/>
-        <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/check-in.js' />"></script>
+        <script type="text/javascript" src="<c:url value='/assets/js/view/hotel/check-out.js' />"></script>
     </jsp:attribute>
     <jsp:body>
 
@@ -40,10 +40,42 @@
                             </div>
                         </div>
                         <div data-ax-td style="width:400px">
+                            <div data-ax-td-label>예약일</div>
+                            <div data-ax-td-wrap>
+                                <div class="input-group" data-ax5picker="date">
+                                    <input type="text" class="form-control js-rsvDtStart" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control js-rsvDtEnd" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon"><i class="cqc-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-ax-tr>
+                        <div data-ax-td style="width:400px">
+                            <div data-ax-td-label>객실타입</div>
+                            <div data-ax-td-wrap>
+                                <ax:common-code groupCd="ROOM_TYPE" dataPath="roomTypCd" clazz="js-roomTypCd" emptyText="전체" />
+                            </div>
+                        </div>
+                        <div data-ax-td style="width:400px">
                             <div data-ax-td-label>도착일</div>
                             <div data-ax-td-wrap>
                                 <div class="input-group" data-ax5picker="date">
-                                    <input type="text" class="form-control js-arrDtEnd" data-ax-path="arrDtEnd" placeholder="YYYY-MM-DD">
+                                    <input type="text" class="form-control js-arrDtStart" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control js-arrDtEnd" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon"><i class="cqc-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-ax-td style="width:400px">
+                            <div data-ax-td-label>출발일</div>
+                            <div data-ax-td-wrap>
+                                <div class="input-group" data-ax5picker="date">
+                                    <input type="text" class="form-control js-depDtStart" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control js-depDtEnd" placeholder="yyyy-mm-dd">
                                     <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                                 </div>
                             </div>
@@ -61,12 +93,13 @@
                     <!-- 목록 -->
                     <div class="ax-button-group" data-fit-height-aside="grid-view-01">
                         <div class="left">
-                            <h2><i class="cqc-list"></i> 도착 목록</h2>
+                            <h2><i class="cqc-list"></i> 투숙 목록</h2>
                         </div>
                     </div>
                     <div data-ax5grid="grid-view-01" data-fit-height-content="grid-view-01" style="height: 500px;"></div>
                 </div>
             </div>
         </div>
+
     </jsp:body>
 </ax:layout>

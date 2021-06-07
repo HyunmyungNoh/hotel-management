@@ -39,7 +39,7 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             height: 620,
             iframe: {
                 param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
-                url: "check-in-content.jsp"
+                url: "in-house-content.jsp"
             },
             header: {title: "체크 인"},
             callback: function (data) {
@@ -123,17 +123,29 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
 
         this.filter = $('.js-filter');
         this.rsvNum = $('.js-rsvNum');       
+        this.rsvDtStart = this.target.find('.js-rsvDtStart');
+        this.rsvDtEnd = this.target.find('.js-rsvDtEnd');
+        this.arrDtStart = this.target.find('.js-arrDtStart');
         this.arrDtEnd = this.target.find('.js-arrDtEnd');
+        this.depDtStart = this.target.find('.js-depDtStart');
+        this.depDtEnd = this.target.find('.js-depDtEnd');
+        this.roomTypCd = this.target.find('.js-roomTypCd');
     },
     getData: function () {
-        var sttusCds = 'RSV_01,RSV_02,RSV_03';
+        var sttusCds = 'CHK_01';
 
         return {
             pageNumber: this.pageNumber || 0,
             pageSize: this.pageSize || 50,
             filter: this.filter.val(),
             rsvNum: this.rsvNum.val(),
+            rsvDtStart: this.rsvDtStart.val(),
+            rsvDtEnd: this.rsvDtEnd.val(),
+            arrDtStart: this.arrDtStart.val(),
             arrDtEnd: this.arrDtEnd.val(),
+            depDtStart: this.depDtStart.val(),
+            depDtEnd: this.depDtEnd.val(),
+            roomTypCd:this.roomTypCd.val(),
             sttusCd: sttusCds
         }
     }

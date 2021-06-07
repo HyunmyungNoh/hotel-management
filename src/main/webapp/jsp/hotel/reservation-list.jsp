@@ -58,15 +58,15 @@
                     </div>
                     <div data-ax-td style="width:400px">
                         <div data-ax-td-label>도착일</div>
-                            <div data-ax-td-wrap>
-                                <div class="input-group" data-ax5picker="date">
-                                    <input type="text" class="form-control js-arrDtStart" placeholder="yyyy-mm-dd">
-                                    <span class="input-group-addon">~</span>
-                                    <input type="text" class="form-control js-arrDtEnd" placeholder="yyyy-mm-dd">
-                                    <span class="input-group-addon"><i class="cqc-calendar"></i></span>
-                                </div>
+                        <div data-ax-td-wrap>
+                            <div class="input-group" data-ax5picker="date">
+                                <input type="text" class="form-control js-arrDtStart" placeholder="yyyy-mm-dd">
+                                <span class="input-group-addon">~</span>
+                                <input type="text" class="form-control js-arrDtEnd" placeholder="yyyy-mm-dd">
+                                <span class="input-group-addon"><i class="cqc-calendar"></i></span>
                             </div>
                         </div>
+                    </div>
                     <div data-ax-td style="width:400px">
                         <div data-ax-td-label>출발일</div>
                         <div data-ax-td-wrap>
@@ -82,35 +82,37 @@
                 <div data-ax-tr>
                     <div data-ax-td style="width:100%">
                         <div data-ax-td-label>상태</div>
-                            <div data-ax-td-wrap>
-                                <label class="checkbox-inline"><input type="checkbox" class="js-sttusCd-all" value=""> 전체 </label>
-                                <ax:common-code groupCd="PMS_STAY_STATUS" name="sttusCd" type="checkbox"  dataPath="sttusCd"/>
-                            </div>
+                        <div data-ax-td-wrap>
+                            <label class="checkbox-inline"><input type="checkbox" class="js-sttusCd-all" value=""> 전체 </label>
+                            <ax:common-code groupCd="PMS_STAY_STATUS" name="sttusCd" type="checkbox"  dataPath="sttusCd"/>
+                        </div>
                     </div>
                     </div>
                 </div>
             </form>
-                <div class="H10"></div>
+            <div class="H10"></div>
         </div>
-        <div class="container-fluid">
-            <div class="row">
-                <form name="excelForm" class="js-form" method="post">
-                    <div class="ax-button-group">
+     
+        <div data-ax5layout="ax1" role="page-content" data-config="{layout:'split-panel', orientation: 'horizontal', splitter: {size: 7}}">
+            <div data-split-panel="{width: '*'}">
+                <div style="padding-right: 10px;" class="" data-split-panel-wrap="">
+
+                    <!-- 목록 -->
+                    <div class="ax-button-group" data-fit-height-aside="grid-view-01">
                         <div class="left">
-                            <h2><i class="cqc-list"></i>
-                                예약 목록 </h2>
+                            <h2><i class="cqc-list"></i> 예약 목록</h2>
                         </div>
                         <div class="right">
                             <div class="form-inline">
-                                <ax:common-code groupCd="PMS_STAY_STATUS" dataPath="sttusCd" clazz="js-sttusCd"/>
-                                <button type="button" class="btn btn-default" data-grid-view-01-btn="change">상태변경</button>
+                                <div class="form-group W200" style="padding-right: 1rem;">
+                                    <ax:common-code groupCd="PMS_STAY_STATUS" dataPath="sttusCd" clazz="js-sttusCd"/>
+                                </div>
+                                <button type="button" class="btn btn-default" data-grid-view-01-btn="change">상태변경</button>                           
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="row">
-                <div data-ax5grid="grid-view-01" data-fit-height-content="grid-view-01" style="height: 500px;"></div>
+                    <div data-ax5grid="grid-view-01" data-fit-height-content="grid-view-01" style="height: 500px;"></div>
+                </div>
             </div>
         </div>
     </jsp:body>

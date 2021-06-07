@@ -217,19 +217,34 @@ public class ReservationService extends BaseService<Reservation, Long> {
         // 객실 타입
         if (isNotEmpty(roomTypCd)) builder.and(qReservation.roomTypCd.eq(roomTypCd));
 
-        //  예약일 - 시작일 기준
+        // 예약일
         if (isNotEmpty(rsvSttDate)) {
             if (isNotEmpty(rsvEndDate)) {
                 builder.and(qReservation.rsvDt.between(rsvSttDate, rsvEndDate));
             } else builder.and(qReservation.rsvDt.goe(rsvSttDate));
-        }
-        // 예약일 - 끝일 기준
-        if (isNotEmpty(rsvEndDate)) {
-            if (isNotEmpty(rsvSttDate)) {
-                builder.and(qReservation.rsvDt.between(rsvSttDate, rsvEndDate));
-            } else builder.and(qReservation.rsvDt.loe(rsvEndDate));
+        } else if (isNotEmpty(rsvEndDate)) {
+            builder.and(qReservation.rsvDt.loe(rsvEndDate));
         }
 
+        // 도착일
+        if (isNotEmpty(arrSttDate)) {
+            if (isNotEmpty(arrEndDate)) {
+                builder.and(qReservation.arrDt.between(arrSttDate, arrEndDate));
+            } else builder.and(qReservation.arrDt.goe(arrSttDate));
+        } else if (isNotEmpty(arrEndDate)) {
+            builder.and(qReservation.arrDt.loe(arrEndDate));
+        }
+
+        // 출발일
+        if (isNotEmpty(depSttDate)) {
+            if (isNotEmpty(depEndDate)) {
+                builder.and(qReservation.depDt.between(depSttDate, depEndDate));
+            } else builder.and(qReservation.depDt.goe(depSttDate));
+        } else if (isNotEmpty(depEndDate)) {
+            builder.and(qReservation.depDt.loe(depEndDate));
+        }
+
+/*
         // 도착일 - 시작일 기준
         if (isNotEmpty(arrSttDate)) {
             if (isNotEmpty(arrEndDate)) {
@@ -255,7 +270,7 @@ public class ReservationService extends BaseService<Reservation, Long> {
                 builder.and(qReservation.depDt.between(depSttDate, depEndDate));
             } else builder.and(qReservation.depDt.loe(depEndDate));
         }
-
+*/
         // 예약 상태
         if (sttusCds != null) {
             if (sttusCds.size() > 0) {
@@ -293,7 +308,8 @@ public class ReservationService extends BaseService<Reservation, Long> {
 
     // check-In
     @Transactional
-    public long checkIn(RsvSaveRequestDto saveDto) {
+//    public long checkIn(RsvSaveRequestDto saveDto) {
+    public long check(RsvSaveRequestDto saveDto, int checkOn) {
 
         long id = 0;
         // guest 인스턴스를 만들어 화면에서 받아온 id 등의 항목을 put
@@ -321,7 +337,21 @@ public class ReservationService extends BaseService<Reservation, Long> {
                 saveDto.getArrDt(), saveDto.getDepDt(), saveDto.getNightCnt(), saveDto.getRoomTypCd(), saveDto.getAdultCnt(), saveDto.getChldCnt(),
                 saveDto.getSaleTypCd(), saveDto.getSrcCd(), saveDto.getPayCd(), saveDto.getAdvnYn(), saveDto.getSalePrc(), saveDto.getSvcPrc(), saveDto.getSttusCd(), saveDto.getRoomNum());
 
-        reservation.예약상태변경("CHK_01");
+        String check = null;
+        switch (checkOn) {
+            case 1:
+                check = "CHK_01";
+                break;
+            case 2:
+                check = "CHK_02";
+                break;
+            case 3:
+                check = "CHK_03";
+                break;
+        }
+
+//        reservation.예약상태변경("CHK_01");
+        reservation.예약상태변경(check);
 
         id = saveDto.getId();
 

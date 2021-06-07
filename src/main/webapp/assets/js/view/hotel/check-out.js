@@ -25,9 +25,9 @@ var ACTIONS = axboot.actionExtend(fnObj, {
             height: 620,
             iframe: {
                 param: "id=" + (data.id||"") + "&rsvNum=" + (data.rsvNum||""),
-                url: "reservation-content.jsp"
+                url: "check-out-content.jsp"
             },
-            header: {title: "예약 조회"},
+            header: {title: "체크 인"},
             callback: function (data) {
                 if (data && data.dirty) {
                     ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
@@ -37,39 +37,6 @@ var ACTIONS = axboot.actionExtend(fnObj, {
         });
     },
     ITEM_CLICK: function (caller, act, data) {
-    },
-    STTUS_CHANGE: function (caller, act, data) {
-        axDialog.confirm({msg: '선택한 항목의 상태를 변경하시겠습니까?'}, function () {
-            if (this.key == 'ok') {
-                var sttusCd = caller.gridView01.getSttusCd();
-                if (!sttusCd) return;
-                var saveList = [].concat(caller.gridView01.getData("selected"));
-                if (!saveList.length) {
-                    axToast.push("선택한 항목이 없습니다.");
-                    return false;
-                }
-
-                saveList.forEach(function (item) {
-                    item.sttusCd = sttusCd;
-                });
-
-                axboot.ajax({
-                    type: 'PUT',
-                    url: '/api/v1/reservation',
-                    data: JSON.stringify(saveList),
-                    callback: function (res) {
-                        ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-                        axToast.push("변경되었습니다");
-                    }
-                });
-            }
-        });
-    },
-    EXCEL_DOWN: function (caller, act, data) {
-        var frm = $('.js-form').get(0);
-        frm.action = '/api/v1/reservation/exceldown';
-        frm.enctype = 'application/x-www-form-urlencoded';
-        frm.submit();
     },
     ITEM_ADD: function (caller, act, data) {
         caller.gridView01.addRow();
@@ -102,7 +69,7 @@ fnObj.pageResize = function () {};
 
 fnObj.pageButtonView = axboot.viewExtend({
     initView: function () {
-        axboot.buttonClick(this, 'data-page-btn', {
+        axboot.buttonClick(this, "data-page-btn", {
             search: function () {
                 ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
             },
@@ -110,7 +77,6 @@ fnObj.pageButtonView = axboot.viewExtend({
                 fnObj.searchView.clear();
             },
             excel: function () {
-                ACTIONS.dispatch(ACTIONS.EXCEL_DOWN);
             }
         });
     }
@@ -141,14 +107,8 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
             }
         });
 
-        // 불필요시 삭제 예정
-        this.roomTypCd = $('.js-roomTypCd').on('change', function () {
-            ACTIONS.dispatch(ACTIONS.PAGE_SEARCH);
-        }); 
-
         this.filter = $('.js-filter');
-        this.rsvNum = $('.js-rsvNum');
-        
+        this.rsvNum = $('.js-rsvNum');       
         this.rsvDtStart = this.target.find('.js-rsvDtStart');
         this.rsvDtEnd = this.target.find('.js-rsvDtEnd');
         this.arrDtStart = this.target.find('.js-arrDtStart');
@@ -156,29 +116,9 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
         this.depDtStart = this.target.find('.js-depDtStart');
         this.depDtEnd = this.target.find('.js-depDtEnd');
         this.roomTypCd = this.target.find('.js-roomTypCd');
-
-        this.sttusCd = this.target.find('input[name="sttusCd"]');
-
-        $('.js-sttusCd-all').on('change', function () {
-            var _this = $(this),    // '전체' 박스를 가리킴
-                value = _this.val();    // 이 '전체' 박스의 값을 가져옴
-            var checked;
-            if (value === '') {
-                checked = _this.prop("checked");
-                $('input[name="sttusCd"]').prop("checked", checked);
-            } 
-        });
     },
     getData: function () {
-/*         var sttusCds = [];
-        this.sttusCd.each(function () {
-            if($(this).is(':checked')) sttusCds.push($(this).val());
-        });  */
-        var sttusCds = '';
-        $('input[name="sttusCd"]:checked').each(function (index) {
-            if (index != 0) sttusCds += ',';
-            sttusCds += $(this).val();
-        });
+        var sttusCds = 'CHK_02';
 
         return {
             pageNumber: this.pageNumber || 0,
@@ -191,8 +131,8 @@ fnObj.searchView = axboot.viewExtend(axboot.searchView, {
             arrDtEnd: this.arrDtEnd.val(),
             depDtStart: this.depDtStart.val(),
             depDtEnd: this.depDtEnd.val(),
-            sttusCd: sttusCds,
-            roomTypCd:this.roomTypCd.val()
+            roomTypCd:this.roomTypCd.val(),
+            sttusCd: sttusCds
         }
     }
 });
@@ -292,8 +232,7 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
 
         if (_type == "modified" || _type == "deleted") {
             list = ax5.util.filter(_list, function () {
-                delete this.deleted;
-                return this.key;
+                return this.id;
             });
         } else {
             list = _list;
