@@ -200,12 +200,17 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
                     }
                 },
                 {
-                    key: 'salePrc',
+                    key: 'sum',
                     label: '합계',
                     width: 150,
                     align: 'center',
                     styleClass: function () {
                         return this.item.rsvDt === '합계' ? 'grid-all-total' : '';
+                    },
+                    formatter: function () {
+                        var salePrc = this.item.salePrc || 0;
+                        var svcPrc = this.item.svcPrc || 0;
+                        return ax5.util.number(salePrc + svcPrc, {'money': true});
                     }
                 }
             ],
@@ -239,8 +244,6 @@ fnObj.gridView01 = axboot.viewExtend(axboot.gridView, {
         return list;
     },
     addRow: function () {
-        // this.target.addRow({__created__: true, writeDt: ax5.util.date(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 12), {return: 'yyyy-MM-dd'})}, "last");
-        this.target.addRow({ __created__: true, memoDtti: moment().format('YYYY-MM-DD hh:mm'), delYn: 'N' }, 'last');
     },
 });
 
